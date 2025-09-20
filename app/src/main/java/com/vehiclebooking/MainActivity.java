@@ -10,6 +10,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button bookVehicleButton;
     private Button viewBookingsButton;
+    private Button analyticsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private void initializeViews() {
         bookVehicleButton = findViewById(R.id.btn_book_vehicle);
         viewBookingsButton = findViewById(R.id.btn_view_bookings);
+        analyticsButton = findViewById(R.id.btn_analytics);
     }
 
     private void setupClickListeners() {
@@ -38,6 +40,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, EnhancedViewBookingsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        analyticsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, BookingAnalyticsActivity.class);
                 startActivity(intent);
             }
         });

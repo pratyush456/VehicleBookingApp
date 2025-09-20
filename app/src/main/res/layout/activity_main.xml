@@ -45,4 +45,15 @@
         android:background="@color/secondary_color"
         android:textColor="@android:color/white" />
 
+    <Button
+        android:id="@+id/btn_analytics"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📊 Analytics Dashboard"
+        android:textSize="18sp"
+        android:padding="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/primary"
+        android:textColor="@android:color/white" />
+
 </LinearLayout>
