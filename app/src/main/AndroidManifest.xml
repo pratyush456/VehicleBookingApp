@@ -29,6 +29,10 @@
             android:name=".ViewBookingsActivity"
             android:exported="false" />
             
+        <activity
+            android:name=".BookingDetailsActivity"
+            android:exported="false" />
+            
         <service
             android:name=".NotificationService"
             android:enabled="true"

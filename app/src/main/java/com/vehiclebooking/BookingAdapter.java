@@ -1,5 +1,7 @@
 package com.vehiclebooking;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,6 +87,14 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             holder.bookingTime.setText("Booked: " + bookingTime);
         }
 
+        // Set up booking card click listener for details
+        holder.itemView.setOnClickListener(v -> {
+            Context context = holder.itemView.getContext();
+            Intent intent = new Intent(context, BookingDetailsActivity.class);
+            intent.putExtra(BookingDetailsActivity.EXTRA_BOOKING_TIMESTAMP, booking.getTimestamp());
+            context.startActivity(intent);
+        });
+        
         // Set up status change button click listener
         holder.changeStatusButton.setOnClickListener(v -> {
             if (statusChangeClickListener != null) {

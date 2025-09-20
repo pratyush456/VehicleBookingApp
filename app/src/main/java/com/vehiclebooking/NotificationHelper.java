@@ -120,6 +120,38 @@ public class NotificationHelper {
         }
     }
 
+    /**
+     * Send confirmation notification for reminder setup
+     */
+    public static void sendReminderConfirmation(Context context, BookingRequest booking, String reminderType) {
+        NotificationHelper helper = new NotificationHelper(context);
+        helper.sendReminderSetNotification(booking, reminderType);
+    }
+
+    private void sendReminderSetNotification(BookingRequest booking, String reminderType) {
+        String bookingId = "BK" + String.valueOf(booking.getTimestamp()).substring(8);
+        String title = "⏰ Reminder Set";
+        String content = "Reminder set for booking #" + bookingId + ": " + reminderType;
+        
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setContentTitle(title)
+                .setContentText(content)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(
+                    "Booking: " + booking.getSource() + " → " + booking.getDestination() + "\n" +
+                    "Travel Date: " + booking.getFormattedTravelDate() + "\n" +
+                    "Reminder: " + reminderType
+                ))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+
+        try {
+            notificationManager.notify(generateNotificationId(), builder.build());
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+    }
+
     private int generateNotificationId() {
         return (int) System.currentTimeMillis();
     }
