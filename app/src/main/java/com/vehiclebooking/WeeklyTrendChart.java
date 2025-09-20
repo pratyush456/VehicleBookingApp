@@ -57,7 +57,8 @@ public class WeeklyTrendChart extends View {
         
         // Map incoming data to our day format and find max
         for (String day : daysOfWeek) {
-            int count = dailyData.getOrDefault(day, 0);
+            Integer dayCount = dailyData.get(day);
+            int count = (dayCount == null ? 0 : dayCount);
             weeklyData.put(day, count);
             maxValue = Math.max(maxValue, count);
         }

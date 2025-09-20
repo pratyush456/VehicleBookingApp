@@ -157,7 +157,8 @@ public class BookingAnalytics {
         for (BookingRequest booking : bookings) {
             String route = booking.getSource() + " → " + booking.getDestination();
             
-            routeCounts.put(route, routeCounts.getOrDefault(route, 0) + 1);
+            Integer currentCount = routeCounts.get(route);
+            routeCounts.put(route, (currentCount == null ? 0 : currentCount) + 1);
             
             // Track statuses for this route
             if (!routeStatuses.containsKey(route)) {
@@ -169,7 +170,8 @@ public class BookingAnalytics {
             
             // Track durations
             long duration = booking.getTravelDate().getTime() - booking.getTimestamp();
-            routeDurations.put(route, routeDurations.getOrDefault(route, 0L) + duration);
+            Long currentDuration = routeDurations.get(route);
+            routeDurations.put(route, (currentDuration == null ? 0L : currentDuration) + duration);
         }
         
         List<RouteStats> routeStats = new ArrayList<>();
@@ -186,7 +188,8 @@ public class BookingAnalytics {
             List<BookingStatus> statuses = routeStatuses.get(route);
             Map<BookingStatus, Integer> statusCount = new HashMap<>();
             for (BookingStatus status : statuses) {
-                statusCount.put(status, statusCount.getOrDefault(status, 0) + 1);
+                Integer currentStatusCount = statusCount.get(status);
+                statusCount.put(status, (currentStatusCount == null ? 0 : currentStatusCount) + 1);
             }
             
             BookingStatus mostCommon = BookingStatus.PENDING;
@@ -230,15 +233,18 @@ public class BookingAnalytics {
             
             // Daily trends
             String dayName = dayFormat.format(bookingDate);
-            dayCounts.put(dayName, dayCounts.getOrDefault(dayName, 0) + 1);
+            Integer currentDayCount = dayCounts.get(dayName);
+            dayCounts.put(dayName, (currentDayCount == null ? 0 : currentDayCount) + 1);
             
             // Monthly trends
             String monthName = monthFormat.format(bookingDate);
-            monthCounts.put(monthName, monthCounts.getOrDefault(monthName, 0) + 1);
+            Integer currentMonthCount = monthCounts.get(monthName);
+            monthCounts.put(monthName, (currentMonthCount == null ? 0 : currentMonthCount) + 1);
             
             // Hour trends
             int hour = Integer.parseInt(hourFormat.format(bookingDate));
-            hourCounts.put(hour, hourCounts.getOrDefault(hour, 0) + 1);
+            Integer currentHourCount = hourCounts.get(hour);
+            hourCounts.put(hour, (currentHourCount == null ? 0 : currentHourCount) + 1);
         }
         
         trends.dailyBookings.putAll(dayCounts);
