@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Vehicle Booking</string>
+    <string name="book_vehicle">Book a Vehicle</string>
+    <string name="view_bookings">View My Bookings</string>
+    <string name="source_location">From (Source)</string>
+    <string name="destination_location">To (Destination)</string>
+    <string name="select_date">Select Date</string>
+    <string name="book_now">Book Now</string>
+    <string name="booking_confirmation">Booking Confirmed!</string>
+    <string name="booking_submitted">Your booking request has been submitted. You will be contacted soon.</string>
+    <string name="fill_all_fields">Please fill all fields</string>
+    <string name="invalid_date">Please select a valid date</string>
+</resources>
