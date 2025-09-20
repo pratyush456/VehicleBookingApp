@@ -59,6 +59,67 @@ public class NotificationHelper {
         BookingStorage.saveBooking(context, bookingRequest);
     }
 
+    /**
+     * Send notification for booking status changes
+     */
+    public static void sendStatusChangeNotification(Context context, BookingRequest booking, BookingStatus newStatus) {
+        NotificationHelper helper = new NotificationHelper(context);
+        helper.sendStatusUpdateNotification(booking, newStatus);
+    }
+
+    private void sendStatusUpdateNotification(BookingRequest booking, BookingStatus status) {
+        String title = "Booking Status Update " + status.getIcon();
+        String shortText = "Status changed to " + status.getDisplayName();
+        String detailedText = createStatusUpdateMessage(booking, status);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setContentTitle(title)
+                .setContentText(shortText)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                         .bigText(detailedText)
+                         .setBigContentTitle(title))
+                .setPriority(getNotificationPriority(status))
+                .setAutoCancel(true)
+                .setColor(status.getColor());
+
+        // Add action button for completed bookings
+        if (status == BookingStatus.COMPLETED) {
+            builder.addAction(android.R.drawable.ic_dialog_email, "Rate Trip", null);
+        }
+
+        try {
+            notificationManager.notify(generateNotificationId(), builder.build());
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String createStatusUpdateMessage(BookingRequest booking, BookingStatus status) {
+        StringBuilder message = new StringBuilder();
+        message.append("Booking ID: BK").append(String.valueOf(booking.getTimestamp()).substring(8)).append("\n");
+        message.append("Route: ").append(booking.getSource()).append(" → ").append(booking.getDestination()).append("\n");
+        message.append("Travel Date: ").append(booking.getFormattedTravelDate()).append("\n\n");
+        message.append("Status: ").append(status.getIcon()).append(" ").append(status.getDisplayName()).append("\n");
+        message.append(status.getDescription());
+        
+        return message.toString();
+    }
+
+    private int getNotificationPriority(BookingStatus status) {
+        switch (status) {
+            case CONFIRMED:
+            case IN_PROGRESS:
+                return NotificationCompat.PRIORITY_HIGH;
+            case COMPLETED:
+                return NotificationCompat.PRIORITY_DEFAULT;
+            case CANCELLED:
+                return NotificationCompat.PRIORITY_LOW;
+            default:
+                return NotificationCompat.PRIORITY_DEFAULT;
+        }
+    }
+
     private int generateNotificationId() {
         return (int) System.currentTimeMillis();
     }

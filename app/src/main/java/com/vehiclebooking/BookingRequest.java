@@ -1,7 +1,9 @@
 package com.vehiclebooking;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class BookingRequest {
@@ -9,12 +11,17 @@ public class BookingRequest {
     private String destination;
     private Date travelDate;
     private long timestamp;
+    private BookingStatus status;
+    private List<StatusChange> statusHistory;
 
     public BookingRequest(String source, String destination, Date travelDate) {
         this.source = source;
         this.destination = destination;
         this.travelDate = travelDate;
         this.timestamp = System.currentTimeMillis();
+        this.status = BookingStatus.PENDING;
+        this.statusHistory = new ArrayList<>();
+        this.statusHistory.add(new StatusChange(BookingStatus.PENDING, System.currentTimeMillis(), "Booking request submitted"));
     }
 
     public String getSource() {
@@ -43,6 +50,51 @@ public class BookingRequest {
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public BookingStatus getStatus() {
+        return status;
+    }
+
+    public List<StatusChange> getStatusHistory() {
+        return statusHistory;
+    }
+
+    /**
+     * Change the booking status with validation
+     */
+    public boolean changeStatus(BookingStatus newStatus, String reason) {
+        if (status == null) {
+            status = BookingStatus.PENDING;
+        }
+        
+        if (!status.canTransitionTo(newStatus)) {
+            return false;
+        }
+        
+        status = newStatus;
+        statusHistory.add(new StatusChange(newStatus, System.currentTimeMillis(), reason));
+        return true;
+    }
+
+    /**
+     * Get the latest status change
+     */
+    public StatusChange getLatestStatusChange() {
+        if (statusHistory.isEmpty()) {
+            return null;
+        }
+        return statusHistory.get(statusHistory.size() - 1);
+    }
+
+    /**
+     * Get status display text with icon
+     */
+    public String getStatusDisplayText() {
+        if (status == null) {
+            status = BookingStatus.PENDING;
+        }
+        return status.getIcon() + " " + status.getDisplayName();
     }
 
     public String getFormattedTravelDate() {

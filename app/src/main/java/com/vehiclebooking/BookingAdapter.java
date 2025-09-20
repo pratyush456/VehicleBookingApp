@@ -1,5 +1,6 @@
 package com.vehiclebooking;
 
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +18,19 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     private List<BookingRequest> bookingList;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
     private SimpleDateFormat timestampFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault());
+    private OnStatusChangeClickListener statusChangeClickListener;
+
+    public interface OnStatusChangeClickListener {
+        void onStatusChangeClick(BookingRequest booking, int position);
+    }
 
     public BookingAdapter(List<BookingRequest> bookingList) {
         this.bookingList = bookingList;
+    }
+
+    public BookingAdapter(List<BookingRequest> bookingList, OnStatusChangeClickListener statusChangeClickListener) {
+        this.bookingList = bookingList;
+        this.statusChangeClickListener = statusChangeClickListener;
     }
 
     @NonNull
@@ -38,17 +49,48 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         String bookingId = "BK" + String.valueOf(booking.getTimestamp()).substring(8);
         holder.bookingId.setText("Booking #" + bookingId);
         
-        // Set booking status (for now, all bookings are pending)
-        holder.bookingStatus.setText("PENDING");
+        // Set dynamic booking status with color and icon
+        BookingStatus status = booking.getStatus();
+        if (status == null) {
+            status = BookingStatus.PENDING; // Default fallback
+        }
+        
+        holder.bookingStatus.setText(status.getDisplayName());
+        
+        // Set status background color
+        GradientDrawable statusBackground = new GradientDrawable();
+        statusBackground.setShape(GradientDrawable.RECTANGLE);
+        statusBackground.setCornerRadius(12f);
+        statusBackground.setColor(status.getColor());
+        holder.bookingStatus.setBackground(statusBackground);
+        
+        // Set text color to white for better contrast
+        holder.bookingStatus.setTextColor(0xFFFFFFFF);
         
         // Set route information
         holder.source.setText("From: " + booking.getSource());
         holder.destination.setText("To: " + booking.getDestination());
         holder.travelDate.setText("📅 " + booking.getFormattedTravelDate());
         
-        // Set booking timestamp
+        // Set booking timestamp and latest status change info
         String bookingTime = timestampFormat.format(new Date(booking.getTimestamp()));
-        holder.bookingTime.setText("Booked: " + bookingTime);
+        
+        // Show latest status change if available
+        StatusChange latestChange = booking.getLatestStatusChange();
+        if (latestChange != null && latestChange.getStatus() != BookingStatus.PENDING) {
+            String statusTime = timestampFormat.format(new Date(latestChange.getTimestamp()));
+            holder.bookingTime.setText("Booked: " + bookingTime + "\n" + 
+                                    status.getIcon() + " " + status.getDisplayName() + ": " + statusTime);
+        } else {
+            holder.bookingTime.setText("Booked: " + bookingTime);
+        }
+
+        // Set up status change button click listener
+        holder.changeStatusButton.setOnClickListener(v -> {
+            if (statusChangeClickListener != null) {
+                statusChangeClickListener.onStatusChangeClick(booking, position);
+            }
+        });
     }
 
     @Override
@@ -62,7 +104,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     }
 
     static class BookingViewHolder extends RecyclerView.ViewHolder {
-        TextView bookingId, bookingStatus, source, destination, travelDate, bookingTime;
+        TextView bookingId, bookingStatus, source, destination, travelDate, bookingTime, changeStatusButton;
 
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -72,6 +114,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             destination = itemView.findViewById(R.id.tv_destination);
             travelDate = itemView.findViewById(R.id.tv_travel_date);
             bookingTime = itemView.findViewById(R.id.tv_booking_time);
+            changeStatusButton = itemView.findViewById(R.id.btn_change_status);
         }
     }
 }
