@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +69,7 @@ public class RouteAnalyticsAdapter extends RecyclerView.Adapter<RouteAnalyticsAd
             if (routeStats.mostCommonStatus != null) {
                 tvStatus.setText(routeStats.mostCommonStatus.getDisplayName());
                 tvStatus.setBackgroundTintList(
-                    itemView.getContext().getColorStateList(routeStats.mostCommonStatus.getColorRes()));
+                    ContextCompat.getColorStateList(itemView.getContext(), routeStats.mostCommonStatus.getColorRes()));
             }
         }
     }
