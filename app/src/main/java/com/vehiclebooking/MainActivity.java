@@ -37,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
         viewBookingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Implement view bookings functionality
-                // This can show a list of all pending/completed bookings
+                Intent intent = new Intent(MainActivity.this, ViewBookingsActivity.class);
+                startActivity(intent);
             }
         });
     }

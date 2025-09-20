@@ -1,0 +1,23 @@
+image: gitpod/workspace-android
+
+tasks:
+  - name: Setup Android Environment
+    init: |
+      echo "Setting up Android development environment..."
+      chmod +x gradlew
+      ./gradlew --version
+    command: |
+      echo "🚀 Android development environment ready!"
+      echo "📱 Your Vehicle Booking App is ready to build and test"
+      echo "💡 Run './gradlew build' to build the project"
+
+ports:
+  - port: 8080
+    onOpen: notify
+    description: Preview Port
+
+vscode:
+  extensions:
+    - vscjava.vscode-java-pack
+    - redhat.java
+    - vscjava.vscode-gradle
