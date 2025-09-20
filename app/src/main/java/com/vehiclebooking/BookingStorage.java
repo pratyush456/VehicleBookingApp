@@ -12,6 +12,18 @@ import java.util.List;
 public class BookingStorage {
     private static final String PREFERENCES_NAME = "vehicle_bookings";
     private static final String BOOKINGS_KEY = "bookings_list";
+    
+    private Context context;
+    
+    // Instance constructor for analytics activity
+    public BookingStorage(Context context) {
+        this.context = context;
+    }
+    
+    // Instance method to get bookings
+    public List<BookingRequest> getBookings() {
+        return getAllBookings(context);
+    }
 
     public static void saveBooking(Context context, BookingRequest booking) {
         SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);

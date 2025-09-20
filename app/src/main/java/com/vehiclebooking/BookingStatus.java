@@ -43,6 +43,20 @@ public enum BookingStatus {
     public String getDescription() {
         return description;
     }
+    
+    /**
+     * Get color resource ID for this status
+     */
+    public int getColorRes() {
+        switch (this) {
+            case PENDING: return R.color.status_pending;
+            case CONFIRMED: return R.color.status_confirmed;
+            case IN_PROGRESS: return R.color.status_in_progress;
+            case COMPLETED: return R.color.status_completed;
+            case CANCELLED: return R.color.status_cancelled;
+            default: return R.color.status_pending;
+        }
+    }
 
     /**
      * Get the next possible statuses that this status can transition to
