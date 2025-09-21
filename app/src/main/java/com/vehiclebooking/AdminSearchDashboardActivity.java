@@ -11,6 +11,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class AdminSearchDashboardActivity extends AppCompatActivity {
     private LinearLayout searchRecordsContainer;
@@ -97,8 +99,13 @@ public class AdminSearchDashboardActivity extends AppCompatActivity {
     }
 
     private void displaySearchRecords(List<VehicleSearchActivity.SearchRecord> records) {
-        // Sort records by timestamp (newest first)
-        records.sort((r1, r2) -> r2.timestamp.compareTo(r1.timestamp));
+        // Sort records by timestamp (newest first) - compatible with API 21+
+        Collections.sort(records, new Comparator<VehicleSearchActivity.SearchRecord>() {
+            @Override
+            public int compare(VehicleSearchActivity.SearchRecord r1, VehicleSearchActivity.SearchRecord r2) {
+                return r2.timestamp.compareTo(r1.timestamp);
+            }
+        });
         
         for (VehicleSearchActivity.SearchRecord record : records) {
             createSearchRecordView(record);
