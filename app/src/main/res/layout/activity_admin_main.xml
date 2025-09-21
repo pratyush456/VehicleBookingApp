@@ -191,7 +191,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="View and manage drivers & passengers"
+                            android:text="View and manage drivers &amp; passengers"
                             android:textSize="12sp"
                             android:textColor="@color/text_secondary" />
                     </LinearLayout>
@@ -248,7 +248,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Analytics & Reports"
+                            android:text="Analytics &amp; Reports"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             android:textColor="@color/text_primary" />
