@@ -32,6 +32,16 @@ public class BookingStorage {
         // Get existing bookings
         List<BookingRequest> bookings = getAllBookings(context);
         
+        // Check for duplicate booking ID to prevent duplicates
+        if (booking.getBookingId() != null) {
+            for (BookingRequest existingBooking : bookings) {
+                if (booking.getBookingId().equals(existingBooking.getBookingId())) {
+                    // Duplicate booking ID found, don't save
+                    return;
+                }
+            }
+        }
+        
         // Add new booking
         bookings.add(booking);
         

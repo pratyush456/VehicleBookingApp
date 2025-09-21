@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class BookingActivity extends AppCompatActivity {
@@ -129,9 +130,22 @@ public class BookingActivity extends AppCompatActivity {
         bookingRequest.setPhoneNumber(phoneNumber);
         bookingRequest.setVehicleType(vehicleType);
         
-        // Generate unique booking ID
-        String bookingId = "BK" + System.currentTimeMillis();
+        // Generate more unique booking ID with random component
+        long timestamp = System.currentTimeMillis();
+        int randomComponent = (int)(Math.random() * 1000);
+        String bookingId = "BK" + timestamp + randomComponent;
         bookingRequest.setBookingId(bookingId);
+        
+        // Additional check: ensure this ID doesn't already exist
+        List<BookingRequest> existingBookings = BookingStorage.getAllBookings(this);
+        for (BookingRequest existing : existingBookings) {
+            if (bookingId.equals(existing.getBookingId())) {
+                // Very rare collision, generate new ID
+                bookingId = "BK" + System.currentTimeMillis() + (int)(Math.random() * 10000);
+                bookingRequest.setBookingId(bookingId);
+                break;
+            }
+        }
         
         // Save booking to storage
         BookingStorage.saveBooking(this, bookingRequest);

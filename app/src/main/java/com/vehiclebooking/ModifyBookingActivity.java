@@ -44,8 +44,8 @@ public class ModifyBookingActivity extends AppCompatActivity {
 
             initializeViews();
             setupClickListeners();
+            selectedCalendar = Calendar.getInstance(); // Initialize calendar before loading data
             loadBookingData();
-            selectedCalendar = Calendar.getInstance();
         } catch (Exception e) {
             Toast.makeText(this, "Error in modify activity: " + e.getMessage(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
