@@ -19,16 +19,15 @@
     <color name="gradient_secondary_start">#F59E0B</color>
     <color name="gradient_secondary_end">#EF4444</color>
     
-    <!-- Status colors -->
-    <color name="status_pending">#FF9800</color>
-    <color name="status_confirmed">#4CAF50</color>
-    <color name="status_completed">#2196F3</color>
-    <color name="status_cancelled">#F44336</color>
-    <color name="status_in_progress">#9C27B0</color>
+    <!-- Status Colors (Updated to Modern Palette) -->
+    <color name="status_pending">#F59E0B</color>
+    <color name="status_confirmed">#10B981</color>
+    <color name="status_completed">#6366F1</color>
+    <color name="status_cancelled">#EF4444</color>
+    <color name="status_in_progress">#8B5CF6</color>
     
-    <!-- Primary colors -->
-    <color name="primary">#2196F3</color>
-    <color name="primary_light">#E3F2FD</color>
+    <!-- Legacy Primary Colors (Updated) -->
+    <color name="primary">#6366F1</color>
     
     <!-- Surface & Background Colors -->
     <color name="background_color">#F9FAFB</color>
