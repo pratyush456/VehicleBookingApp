@@ -22,7 +22,8 @@ public class BookingActivity extends AppCompatActivity {
     private TextView selectedDateText;
     private Button selectDateButton;
     private Button bookNowButton;
-    private Button searchVehiclesButton;
+    private EditText phoneNumberEditText;
+    private EditText vehicleTypeEditText;
     
     private Calendar selectedCalendar;
     private NotificationHelper notificationHelper;
@@ -44,7 +45,8 @@ public class BookingActivity extends AppCompatActivity {
         selectedDateText = findViewById(R.id.tv_selected_date);
         selectDateButton = findViewById(R.id.btn_select_date);
         bookNowButton = findViewById(R.id.btn_book_now);
-        searchVehiclesButton = findViewById(R.id.btn_search_vehicles);
+        phoneNumberEditText = findViewById(R.id.et_phone_number);
+        vehicleTypeEditText = findViewById(R.id.et_vehicle_type);
     }
 
     private void setupClickListeners() {
@@ -59,15 +61,6 @@ public class BookingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 handleBookingSubmission();
-            }
-        });
-
-        searchVehiclesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Open vehicle search activity
-                Intent intent = new Intent(BookingActivity.this, VehicleSearchActivitySimple.class);
-                startActivity(intent);
             }
         });
     }
@@ -103,20 +96,41 @@ public class BookingActivity extends AppCompatActivity {
         String source = sourceEditText.getText().toString().trim();
         String destination = destinationEditText.getText().toString().trim();
         String selectedDate = selectedDateText.getText().toString();
+        String phoneNumber = phoneNumberEditText.getText().toString().trim();
+        String vehicleType = vehicleTypeEditText.getText().toString().trim();
 
-        if (source.isEmpty() || destination.isEmpty() || selectedDate.equals("No date selected")) {
-            Toast.makeText(this, getString(R.string.fill_all_fields), Toast.LENGTH_SHORT).show();
+        // Validation
+        if (source.isEmpty() || destination.isEmpty() || selectedDate.equals("No date selected") || 
+            phoneNumber.isEmpty() || vehicleType.isEmpty()) {
+            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        // Validate phone number
+        if (!isValidPhoneNumber(phoneNumber)) {
+            Toast.makeText(this, "Please enter a valid phone number", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Create booking request
+        // Create enhanced booking request with phone and vehicle type
         BookingRequest bookingRequest = new BookingRequest(source, destination, selectedCalendar.getTime());
+        bookingRequest.setPhoneNumber(phoneNumber);
+        bookingRequest.setVehicleType(vehicleType);
+        
+        // Generate unique booking ID
+        String bookingId = "BK" + System.currentTimeMillis();
+        bookingRequest.setBookingId(bookingId);
+        
+        // Save booking to storage
+        BookingStorage storage = new BookingStorage(this);
+        storage.addBooking(bookingRequest);
         
         // Send notification to vehicle owner (you)
         notificationHelper.sendBookingNotification(bookingRequest);
         
-        // Show confirmation to user
-        Toast.makeText(this, getString(R.string.booking_submitted), Toast.LENGTH_LONG).show();
+        // Show confirmation to user with booking ID
+        Toast.makeText(this, "✅ Booking submitted successfully!\nBooking ID: " + bookingId + 
+            "\nWe will contact you at " + phoneNumber, Toast.LENGTH_LONG).show();
         
         // Clear form
         clearForm();
@@ -125,7 +139,14 @@ public class BookingActivity extends AppCompatActivity {
     private void clearForm() {
         sourceEditText.setText("");
         destinationEditText.setText("");
+        phoneNumberEditText.setText("");
+        vehicleTypeEditText.setText("");
         selectedDateText.setText("No date selected");
         selectedCalendar = Calendar.getInstance();
+    }
+    
+    private boolean isValidPhoneNumber(String phone) {
+        // Basic phone number validation - accepts numbers with optional formatting
+        return phone.matches("^[+]?[0-9\\s\\-\\(\\)]{10,}$");
     }
 }

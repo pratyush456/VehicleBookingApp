@@ -38,7 +38,7 @@
         android:id="@+id/btn_view_bookings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="View My Bookings"
+        android:text="📋 Admin Booking Management"
         android:textSize="18sp"
         android:padding="16dp"
         android:layout_marginBottom="16dp"

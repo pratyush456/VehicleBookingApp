@@ -84,33 +84,45 @@
             android:layout_marginBottom="24dp"
             android:textColor="@color/text_secondary" />
 
-        <!-- Vehicle Search Option -->
+        <!-- Phone Number Field -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Need help choosing a vehicle?"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"
-            android:textColor="@color/primary_color" />
-
-        <Button
-            android:id="@+id/btn_search_vehicles"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="🔍 Search Available Vehicles"
+            android:text="Contact Phone Number"
             android:textSize="16sp"
-            android:background="@drawable/rounded_button"
-            android:textColor="#ffffff"
-            android:layout_marginBottom="24dp" />
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
 
+        <EditText
+            android:id="@+id/et_phone_number"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/rounded_edittext"
+            android:padding="12dp"
+            android:hint="Enter your phone number"
+            android:inputType="phone"
+            android:maxLines="1"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Vehicle Type Field -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Or proceed with your booking:"
-            android:textSize="14sp"
-            android:layout_marginBottom="16dp"
-            android:textColor="@color/text_secondary" />
+            android:text="Vehicle Type Preference"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/et_vehicle_type"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/rounded_edittext"
+            android:padding="12dp"
+            android:hint="e.g., Sedan, SUV, Van, Luxury Car"
+            android:inputType="text"
+            android:maxLines="1"
+            android:layout_marginBottom="24dp" />
 
         <Button
             android:id="@+id/btn_book_now"

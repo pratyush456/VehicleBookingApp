@@ -13,6 +13,9 @@ public class BookingRequest {
     private long timestamp;
     private BookingStatus status;
     private List<StatusChange> statusHistory;
+    private String phoneNumber;
+    private String vehicleType;
+    private String bookingId;
 
     public BookingRequest(String source, String destination, Date travelDate) {
         this.source = source;
@@ -102,10 +105,37 @@ public class BookingRequest {
         return dateFormat.format(travelDate);
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getVehicleType() {
+        return vehicleType;
+    }
+
+    public void setVehicleType(String vehicleType) {
+        this.vehicleType = vehicleType;
+    }
+
+    public String getBookingId() {
+        return bookingId;
+    }
+
+    public void setBookingId(String bookingId) {
+        this.bookingId = bookingId;
+    }
+
     public String getBookingSummary() {
-        return "From: " + source + "\n" +
+        return "Booking ID: " + (bookingId != null ? bookingId : "N/A") + "\n" +
+               "From: " + source + "\n" +
                "To: " + destination + "\n" +
-               "Date: " + getFormattedTravelDate();
+               "Date: " + getFormattedTravelDate() + "\n" +
+               "Vehicle: " + (vehicleType != null ? vehicleType : "Not specified") + "\n" +
+               "Phone: " + (phoneNumber != null ? phoneNumber : "Not provided");
     }
 
     @Override

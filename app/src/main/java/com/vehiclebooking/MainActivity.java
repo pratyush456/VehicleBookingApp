@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         viewBookingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, EnhancedViewBookingsActivity.class);
+                Intent intent = new Intent(MainActivity.this, AdminBookingViewActivity.class);
                 startActivity(intent);
             }
         });

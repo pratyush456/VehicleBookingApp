@@ -57,6 +57,10 @@
             android:name=".AdminSearchDashboardActivity"
             android:exported="false" />
             
+        <activity
+            android:name=".AdminBookingViewActivity"
+            android:exported="false" />
+            
         <service
             android:name=".NotificationService"
             android:enabled="true"
