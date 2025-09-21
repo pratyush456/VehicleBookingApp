@@ -1,6 +1,7 @@
 package com.vehiclebooking;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +22,7 @@ public class BookingActivity extends AppCompatActivity {
     private TextView selectedDateText;
     private Button selectDateButton;
     private Button bookNowButton;
+    private Button searchVehiclesButton;
     
     private Calendar selectedCalendar;
     private NotificationHelper notificationHelper;
@@ -42,6 +44,7 @@ public class BookingActivity extends AppCompatActivity {
         selectedDateText = findViewById(R.id.tv_selected_date);
         selectDateButton = findViewById(R.id.btn_select_date);
         bookNowButton = findViewById(R.id.btn_book_now);
+        searchVehiclesButton = findViewById(R.id.btn_search_vehicles);
     }
 
     private void setupClickListeners() {
@@ -56,6 +59,15 @@ public class BookingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 handleBookingSubmission();
+            }
+        });
+
+        searchVehiclesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open vehicle search activity
+                Intent intent = new Intent(BookingActivity.this, VehicleSearchActivitySimple.class);
+                startActivity(intent);
             }
         });
     }

@@ -42,6 +42,10 @@
             android:exported="false" />
             
         <activity
+            android:name=".BookingAnalyticsActivitySimple"
+            android:exported="false" />
+            
+        <activity
             android:name=".VehicleSearchActivity"
             android:exported="false" />
             
