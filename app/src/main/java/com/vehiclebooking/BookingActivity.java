@@ -122,8 +122,7 @@ public class BookingActivity extends AppCompatActivity {
         bookingRequest.setBookingId(bookingId);
         
         // Save booking to storage
-        BookingStorage storage = new BookingStorage(this);
-        storage.addBooking(bookingRequest);
+        BookingStorage.saveBooking(this, bookingRequest);
         
         // Send notification to vehicle owner (you)
         notificationHelper.sendBookingNotification(bookingRequest);

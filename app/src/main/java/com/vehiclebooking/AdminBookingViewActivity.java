@@ -249,8 +249,7 @@ public class AdminBookingViewActivity extends AppCompatActivity {
                 booking.changeStatus(newStatus, "Status updated by admin");
                 
                 // Save updated booking
-                BookingStorage storage = new BookingStorage(this);
-                storage.updateBooking(booking);
+                BookingStorage.updateBooking(this, booking);
                 
                 loadBookingData(); // Refresh the display
                 Toast.makeText(this, "Status updated to: " + newStatus.getDisplayName(), Toast.LENGTH_SHORT).show();
