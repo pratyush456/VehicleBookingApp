@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         vehicleSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, VehicleSearchActivity.class);
+                Intent intent = new Intent(MainActivity.this, VehicleSearchActivitySimple.class);
                 startActivity(intent);
             }
         });

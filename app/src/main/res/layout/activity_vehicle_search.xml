@@ -41,11 +41,12 @@
             android:visibility="gone" />
 
         <!-- Search Input -->
-        <com.google.android.material.card.MaterialCardView
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:elevation="4dp">
+            android:elevation="4dp"
+            android:radius="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -73,14 +74,15 @@
 
             </LinearLayout>
 
-        </com.google.android.material.card.MaterialCardView>
+        </androidx.cardview.widget.CardView>
 
         <!-- Contact Information -->
-        <com.google.android.material.card.MaterialCardView
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:elevation="4dp">
+            android:elevation="4dp"
+            android:radius="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -118,7 +120,7 @@
 
             </LinearLayout>
 
-        </com.google.android.material.card.MaterialCardView>
+        </androidx.cardview.widget.CardView>
 
         <!-- Search Button -->
         <Button
@@ -133,11 +135,12 @@
             android:layout_marginBottom="24dp" />
 
         <!-- Search Results Container -->
-        <com.google.android.material.card.MaterialCardView
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:elevation="4dp"
+            android:radius="8dp"
             android:visibility="visible">
 
             <LinearLayout
@@ -154,7 +157,7 @@
 
             </LinearLayout>
 
-        </com.google.android.material.card.MaterialCardView>
+        </androidx.cardview.widget.CardView>
 
         <!-- Instructions -->
         <TextView

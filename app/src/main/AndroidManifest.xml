@@ -46,6 +46,10 @@
             android:exported="false" />
             
         <activity
+            android:name=".VehicleSearchActivitySimple"
+            android:exported="false" />
+            
+        <activity
             android:name=".AdminSearchDashboardActivity"
             android:exported="false" />
             
