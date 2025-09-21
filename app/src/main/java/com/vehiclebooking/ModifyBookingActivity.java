@@ -32,16 +32,25 @@ public class ModifyBookingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_modify_booking);
+        
+        try {
+            setContentView(R.layout.activity_modify_booking);
 
-        // Get booking details from intent
-        bookingId = getIntent().getStringExtra("booking_id");
-        phoneNumber = getIntent().getStringExtra("phone_number");
+            // Get booking details from intent
+            bookingId = getIntent().getStringExtra("booking_id");
+            phoneNumber = getIntent().getStringExtra("phone_number");
+            
+            Toast.makeText(this, "Modify booking: " + bookingId + " for " + phoneNumber, Toast.LENGTH_SHORT).show();
 
-        initializeViews();
-        setupClickListeners();
-        loadBookingData();
-        selectedCalendar = Calendar.getInstance();
+            initializeViews();
+            setupClickListeners();
+            loadBookingData();
+            selectedCalendar = Calendar.getInstance();
+        } catch (Exception e) {
+            Toast.makeText(this, "Error in modify activity: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+            finish();
+        }
     }
 
     private void initializeViews() {
@@ -163,13 +172,24 @@ public class ModifyBookingActivity extends AppCompatActivity {
         currentBooking.setVehicleType(vehicleType);
         currentBooking.setTravelDate(selectedCalendar.getTime());
         
-        // Add status change to indicate modification
-        currentBooking.changeStatus(currentBooking.getStatus(), "Booking modified by customer");
+        // If booking was confirmed, change it back to pending after modification
+        BookingStatus originalStatus = currentBooking.getStatus();
+        if (originalStatus == BookingStatus.CONFIRMED) {
+            currentBooking.changeStatus(BookingStatus.PENDING, "Booking modified by customer - moved to pending for re-confirmation");
+        } else {
+            // Add status change to indicate modification
+            currentBooking.changeStatus(currentBooking.getStatus(), "Booking modified by customer");
+        }
         
         // Save the updated booking
         BookingStorage.updateBooking(this, currentBooking);
 
-        Toast.makeText(this, "✅ Booking updated successfully!\nBooking ID: " + currentBooking.getBookingId(), 
+        String statusMessage = "";
+        if (originalStatus == BookingStatus.CONFIRMED) {
+            statusMessage = "\nStatus changed to Pending for re-confirmation";
+        }
+        
+        Toast.makeText(this, "\u2705 Booking updated successfully!\nBooking ID: " + currentBooking.getBookingId() + statusMessage, 
                       Toast.LENGTH_LONG).show();
 
         // Return to the previous activity with success result

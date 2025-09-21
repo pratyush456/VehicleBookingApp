@@ -226,10 +226,17 @@ public class CustomerBookingStatusActivity extends AppCompatActivity {
     }
 
     private void modifyBooking(BookingRequest booking) {
-        Intent intent = new Intent(this, ModifyBookingActivity.class);
-        intent.putExtra("booking_id", booking.getBookingId());
-        intent.putExtra("phone_number", booking.getPhoneNumber());
-        startActivityForResult(intent, 100);
+        try {
+            Toast.makeText(this, "Opening modify page for booking: " + booking.getBookingId(), Toast.LENGTH_SHORT).show();
+            
+            Intent intent = new Intent(this, ModifyBookingActivity.class);
+            intent.putExtra("booking_id", booking.getBookingId());
+            intent.putExtra("phone_number", booking.getPhoneNumber());
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "Error opening modify page: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
     }
 
     private void cancelBooking(BookingRequest booking) {
@@ -282,17 +289,9 @@ public class CustomerBookingStatusActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 100 && resultCode == RESULT_OK) {
-            // Booking was modified, refresh the view
-            loadCustomerBookings();
-        }
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
+        // Always refresh when returning to this activity (including after modification)
         loadCustomerBookings();
     }
 
