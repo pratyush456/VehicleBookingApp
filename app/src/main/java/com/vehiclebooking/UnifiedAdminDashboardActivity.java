@@ -127,7 +127,7 @@ public class UnifiedAdminDashboardActivity extends AppCompatActivity {
         TextView headerText = new TextView(this);
         headerText.setText(title);
         headerText.setTextSize(16);
-        headerText.setTextStyle(android.graphics.Typeface.BOLD);
+        headerText.setTypeface(null, android.graphics.Typeface.BOLD);
         headerText.setPadding(0, 20, 0, 10);
         headerText.setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
         recordsContainer.addView(headerText);
