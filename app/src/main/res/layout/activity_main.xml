@@ -56,4 +56,26 @@
         android:background="@color/primary"
         android:textColor="@android:color/white" />
 
+    <Button
+        android:id="@+id/btn_vehicle_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🔍 Search Vehicles"
+        android:textSize="18sp"
+        android:padding="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_button"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/btn_admin_dashboard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="👨‍💼 Admin Dashboard"
+        android:textSize="18sp"
+        android:padding="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_button_secondary"
+        android:textColor="@android:color/white" />
+
 </LinearLayout>

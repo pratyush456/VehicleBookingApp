@@ -11,6 +11,8 @@ public class MainActivity extends AppCompatActivity {
     private Button bookVehicleButton;
     private Button viewBookingsButton;
     private Button analyticsButton;
+    private Button vehicleSearchButton;
+    private Button adminDashboardButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
         bookVehicleButton = findViewById(R.id.btn_book_vehicle);
         viewBookingsButton = findViewById(R.id.btn_view_bookings);
         analyticsButton = findViewById(R.id.btn_analytics);
+        vehicleSearchButton = findViewById(R.id.btn_vehicle_search);
+        adminDashboardButton = findViewById(R.id.btn_admin_dashboard);
     }
 
     private void setupClickListeners() {
@@ -48,6 +52,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, BookingAnalyticsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        vehicleSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, VehicleSearchActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        adminDashboardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AdminSearchDashboardActivity.class);
                 startActivity(intent);
             }
         });

@@ -41,6 +41,14 @@
             android:name=".BookingAnalyticsActivity"
             android:exported="false" />
             
+        <activity
+            android:name=".VehicleSearchActivity"
+            android:exported="false" />
+            
+        <activity
+            android:name=".AdminSearchDashboardActivity"
+            android:exported="false" />
+            
         <service
             android:name=".NotificationService"
             android:enabled="true"
