@@ -128,11 +128,15 @@ public class BookingActivity extends AppCompatActivity {
         notificationHelper.sendBookingNotification(bookingRequest);
         
         // Show confirmation to user with booking ID
-        Toast.makeText(this, "✅ Booking submitted successfully!\nBooking ID: " + bookingId + 
-            "\nWe will contact you at " + phoneNumber, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "\u2705 Booking submitted successfully!\nBooking ID: " + bookingId + 
+            "\nRedirecting to your booking status...", Toast.LENGTH_SHORT).show();
         
         // Clear form
         clearForm();
+        
+        // Redirect to customer booking status
+        CustomerBookingStatusActivity.launch(this, phoneNumber);
+        finish();
     }
 
     private void clearForm() {

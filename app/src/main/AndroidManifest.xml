@@ -65,6 +65,14 @@
             android:name=".UnifiedAdminDashboardActivity"
             android:exported="false" />
             
+        <activity
+            android:name=".CustomerBookingStatusActivity"
+            android:exported="false" />
+            
+        <activity
+            android:name=".ModifyBookingActivity"
+            android:exported="false" />
+            
         <service
             android:name=".NotificationService"
             android:enabled="true"
