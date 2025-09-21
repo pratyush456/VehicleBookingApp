@@ -48,9 +48,9 @@ public class VehicleSearchActivitySimple extends AppCompatActivity {
         searchResultsContainer = findViewById(R.id.searchResultsContainer);
         
         // Set hints
-        searchQuery.setHint("Search for vehicles (e.g., 'sedan', 'SUV', 'luxury')");
+        searchQuery.setHint("What vehicle are you looking for? (e.g., 'sedan', 'SUV', 'luxury')");
         phoneNumber.setHint("Your phone number");
-        customerName.setHint("Your name (optional)");
+        customerName.setHint("Your full name (required)");
         
         // Hide location text since we're not using GPS
         TextView locationText = findViewById(R.id.locationText);
@@ -73,9 +73,14 @@ public class VehicleSearchActivitySimple extends AppCompatActivity {
         String phone = phoneNumber.getText().toString().trim();
         String name = customerName.getText().toString().trim();
         
-        // Validation
+        // Validation - Name is now mandatory
+        if (name.isEmpty()) {
+            Toast.makeText(this, "Please enter your name", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
         if (query.isEmpty()) {
-            Toast.makeText(this, "Please enter a search term", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter what vehicle you are looking for", Toast.LENGTH_SHORT).show();
             return;
         }
         
@@ -96,7 +101,14 @@ public class VehicleSearchActivitySimple extends AppCompatActivity {
         // Perform search and display results
         displaySearchResults(query);
         
-        Toast.makeText(this, "✅ Search saved! Admin will contact you soon.", Toast.LENGTH_LONG).show();
+        // Personalized thank you message with customer name
+        String thankYouMessage = String.format(
+            "✅ Thank you %s!\n" +
+            "Your search for '%s' has been saved.\n" +
+            "Our admin team will contact you soon at %s.",
+            name, query, phone
+        );
+        Toast.makeText(this, thankYouMessage, Toast.LENGTH_LONG).show();
     }
     
     private boolean isValidPhoneNumber(String phone) {
@@ -110,7 +122,7 @@ public class VehicleSearchActivitySimple extends AppCompatActivity {
             VehicleSearchActivity.SearchRecord searchRecord = new VehicleSearchActivity.SearchRecord();
             searchRecord.searchQuery = query;
             searchRecord.phoneNumber = phone;
-            searchRecord.customerName = name.isEmpty() ? "Not provided" : name;
+            searchRecord.customerName = name; // Name is now mandatory, so always provided
             searchRecord.timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
             
             // No location data in simple version

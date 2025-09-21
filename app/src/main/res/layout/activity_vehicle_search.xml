@@ -90,24 +90,42 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="📞 Your Contact Information"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="#2c3e50"
-                    android:layout_marginBottom="8dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📞 Your Contact Information"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="8dp" />
 
-                <EditText
-                    android:id="@+id/customerName"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@drawable/rounded_edittext"
-                    android:padding="12dp"
-                    android:textSize="14sp"
-                    android:inputType="textPersonName"
-                    android:layout_marginBottom="8dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Full Name *"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#e74c3c"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/customerName"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/rounded_edittext"
+            android:padding="12dp"
+            android:textSize="14sp"
+            android:inputType="textPersonName"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Phone Number *"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#e74c3c"
+            android:layout_marginBottom="4dp" />
 
                 <EditText
                     android:id="@+id/phoneNumber"

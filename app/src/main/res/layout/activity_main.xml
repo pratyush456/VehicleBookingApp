@@ -35,17 +35,6 @@
         android:textColor="@android:color/white" />
 
     <Button
-        android:id="@+id/btn_view_bookings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="📋 Admin Booking Management"
-        android:textSize="18sp"
-        android:padding="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@color/secondary_color"
-        android:textColor="@android:color/white" />
-
-    <Button
         android:id="@+id/btn_analytics"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -57,21 +46,10 @@
         android:textColor="@android:color/white" />
 
     <Button
-        android:id="@+id/btn_vehicle_search"
+        android:id="@+id/btn_unified_admin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="🔍 Search Vehicles"
-        android:textSize="18sp"
-        android:padding="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/rounded_button"
-        android:textColor="@android:color/white" />
-
-    <Button
-        android:id="@+id/btn_admin_dashboard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="👨‍💼 Admin Dashboard"
+        android:text="🎯 Unified Admin Dashboard"
         android:textSize="18sp"
         android:padding="16dp"
         android:layout_marginBottom="16dp"

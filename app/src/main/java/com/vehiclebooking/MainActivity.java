@@ -9,10 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
 
     private Button bookVehicleButton;
-    private Button viewBookingsButton;
     private Button analyticsButton;
-    private Button vehicleSearchButton;
-    private Button adminDashboardButton;
+    private Button unifiedAdminButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,10 +23,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void initializeViews() {
         bookVehicleButton = findViewById(R.id.btn_book_vehicle);
-        viewBookingsButton = findViewById(R.id.btn_view_bookings);
         analyticsButton = findViewById(R.id.btn_analytics);
-        vehicleSearchButton = findViewById(R.id.btn_vehicle_search);
-        adminDashboardButton = findViewById(R.id.btn_admin_dashboard);
+        unifiedAdminButton = findViewById(R.id.btn_unified_admin);
     }
 
     private void setupClickListeners() {
@@ -36,14 +32,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, BookingActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        viewBookingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AdminBookingViewActivity.class);
                 startActivity(intent);
             }
         });
@@ -56,18 +44,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        vehicleSearchButton.setOnClickListener(new View.OnClickListener() {
+        unifiedAdminButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, VehicleSearchActivitySimple.class);
-                startActivity(intent);
-            }
-        });
-
-        adminDashboardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AdminSearchDashboardActivity.class);
+                Intent intent = new Intent(MainActivity.this, UnifiedAdminDashboardActivity.class);
                 startActivity(intent);
             }
         });
