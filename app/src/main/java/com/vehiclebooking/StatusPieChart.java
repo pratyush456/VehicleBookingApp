@@ -105,7 +105,7 @@ public class StatusPieChart extends View {
         }
         
         // Draw center circle for donut effect
-        paint.setColor(ContextCompat.getColor(getContext(), R.color.background_light));
+        paint.setColor(ContextCompat.getColor(getContext(), R.color.surface_color));
         float centerRadius = radius * 0.5f;
         canvas.drawCircle(centerX, centerY, centerRadius, paint);
         
