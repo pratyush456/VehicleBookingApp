@@ -20,19 +20,35 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        
+        try {
+            android.util.Log.d("LoginActivity", "LoginActivity started");
+            setContentView(R.layout.activity_login);
+            android.util.Log.d("LoginActivity", "Layout set successfully");
 
-        userManager = UserManager.getInstance(this);
-        userManager.initializeDefaultUsers(); // Create default admin if needed
+            userManager = UserManager.getInstance(this);
+            android.util.Log.d("LoginActivity", "UserManager initialized");
+            
+            userManager.initializeDefaultUsers(); // Create default admin if needed
+            android.util.Log.d("LoginActivity", "Default users initialized");
 
-        // Check if user is already logged in
-        if (userManager.isLoggedIn()) {
-            redirectToAppropriateActivity();
-            return;
+            // Check if user is already logged in
+            if (userManager.isLoggedIn()) {
+                android.util.Log.d("LoginActivity", "User already logged in, redirecting");
+                redirectToAppropriateActivity();
+                return;
+            }
+
+            initializeViews();
+            android.util.Log.d("LoginActivity", "Views initialized");
+            
+            setupClickListeners();
+            android.util.Log.d("LoginActivity", "Click listeners set up");
+            
+        } catch (Exception e) {
+            android.util.Log.e("LoginActivity", "Error in LoginActivity onCreate", e);
+            android.widget.Toast.makeText(this, "Error initializing login: " + e.getMessage(), android.widget.Toast.LENGTH_LONG).show();
         }
-
-        initializeViews();
-        setupClickListeners();
     }
 
     private void initializeViews() {
