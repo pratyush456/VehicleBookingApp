@@ -27,6 +27,7 @@ public class BookingActivity extends AppCompatActivity {
     
     private Calendar selectedCalendar;
     private NotificationHelper notificationHelper;
+    private boolean isSubmitting = false; // Prevent double submission
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +94,15 @@ public class BookingActivity extends AppCompatActivity {
     }
 
     private void handleBookingSubmission() {
+        // Prevent double submission
+        if (isSubmitting) {
+            Toast.makeText(this, "Booking already in progress...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        isSubmitting = true;
+        bookNowButton.setEnabled(false); // Disable button during submission
+        
         String source = sourceEditText.getText().toString().trim();
         String destination = destinationEditText.getText().toString().trim();
         String selectedDate = selectedDateText.getText().toString();
@@ -103,12 +113,14 @@ public class BookingActivity extends AppCompatActivity {
         if (source.isEmpty() || destination.isEmpty() || selectedDate.equals("No date selected") || 
             phoneNumber.isEmpty() || vehicleType.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            resetSubmissionState();
             return;
         }
         
         // Validate phone number
         if (!isValidPhoneNumber(phoneNumber)) {
             Toast.makeText(this, "Please enter a valid phone number", Toast.LENGTH_SHORT).show();
+            resetSubmissionState();
             return;
         }
 
@@ -131,8 +143,9 @@ public class BookingActivity extends AppCompatActivity {
         Toast.makeText(this, "\u2705 Booking submitted successfully!\nBooking ID: " + bookingId + 
             "\nRedirecting to your booking status...", Toast.LENGTH_SHORT).show();
         
-        // Clear form
+        // Clear form and reset submission state
         clearForm();
+        resetSubmissionState();
         
         // Redirect to customer booking status
         CustomerBookingStatusActivity.launch(this, phoneNumber);
@@ -146,6 +159,11 @@ public class BookingActivity extends AppCompatActivity {
         vehicleTypeEditText.setText("");
         selectedDateText.setText("No date selected");
         selectedCalendar = Calendar.getInstance();
+    }
+    
+    private void resetSubmissionState() {
+        isSubmitting = false;
+        bookNowButton.setEnabled(true);
     }
     
     private boolean isValidPhoneNumber(String phone) {
