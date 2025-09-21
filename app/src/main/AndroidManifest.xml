@@ -73,6 +73,27 @@
             android:name=".ModifyBookingActivity"
             android:exported="false" />
             
+        <!-- Missing activities that are referenced in code -->
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false" />
+            
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false" />
+            
+        <activity
+            android:name=".AdminMainActivity"
+            android:exported="false" />
+            
+        <activity
+            android:name=".DriverMainActivity"
+            android:exported="false" />
+            
+        <activity
+            android:name=".PassengerMainActivity"
+            android:exported="false" />
+            
         <service
             android:name=".NotificationService"
             android:enabled="true"
