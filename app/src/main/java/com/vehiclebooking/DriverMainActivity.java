@@ -67,9 +67,8 @@ public class DriverMainActivity extends AppCompatActivity {
         viewBookingsCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Show available bookings for drivers to accept
-                Intent intent = new Intent(DriverMainActivity.this, DriverBookingsActivity.class);
-                startActivity(intent);
+                // TODO: Create DriverBookingsActivity for drivers to view available bookings
+                Toast.makeText(DriverMainActivity.this, "Driver bookings feature coming soon!", Toast.LENGTH_SHORT).show();
             }
         });
 
