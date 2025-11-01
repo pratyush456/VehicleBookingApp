@@ -3,11 +3,17 @@ package com.vehiclebooking;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+    private Button btnBookVehicle;
+    private Button btnViewMyBookings;
+    private Button btnAnalytics;
+    private Button btnUnifiedAdmin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,19 +27,82 @@ public class MainActivity extends AppCompatActivity {
             
             Log.d(TAG, "Content view set successfully");
             
-            // Small delay to ensure proper initialization
-            new android.os.Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    redirectToLogin();
-                }
-            }, 100);
+            // Initialize views and setup click listeners
+            initializeViews();
+            setupClickListeners();
             
         } catch (Exception e) {
             Log.e(TAG, "Error in MainActivity onCreate", e);
             Toast.makeText(this, "Error starting app: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            // Don't finish() if there's an error, let user see the error
+            // Fallback: redirect to login if there's an error
+            redirectToLogin();
         }
+    }
+    
+    private void initializeViews() {
+        btnBookVehicle = findViewById(R.id.btn_book_vehicle);
+        btnViewMyBookings = findViewById(R.id.btn_view_my_bookings);
+        btnAnalytics = findViewById(R.id.btn_analytics);
+        btnUnifiedAdmin = findViewById(R.id.btn_unified_admin);
+    }
+    
+    private void setupClickListeners() {
+        btnBookVehicle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Check if user is logged in, if not redirect to login
+                UserManager userManager = UserManager.getInstance(MainActivity.this);
+                if (userManager.isLoggedIn()) {
+                    Intent intent = new Intent(MainActivity.this, BookingActivity.class);
+                    startActivity(intent);
+                } else {
+                    redirectToLogin();
+                }
+            }
+        });
+        
+        btnViewMyBookings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Check if user is logged in, if not redirect to login
+                UserManager userManager = UserManager.getInstance(MainActivity.this);
+                if (userManager.isLoggedIn()) {
+                    Intent intent = new Intent(MainActivity.this, ViewBookingsActivity.class);
+                    startActivity(intent);
+                } else {
+                    redirectToLogin();
+                }
+            }
+        });
+        
+        btnAnalytics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Check if user is logged in, if not redirect to login
+                UserManager userManager = UserManager.getInstance(MainActivity.this);
+                if (userManager.isLoggedIn()) {
+                    Intent intent = new Intent(MainActivity.this, BookingAnalyticsActivity.class);
+                    startActivity(intent);
+                } else {
+                    redirectToLogin();
+                }
+            }
+        });
+        
+        btnUnifiedAdmin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Check if user is logged in and is admin
+                UserManager userManager = UserManager.getInstance(MainActivity.this);
+                if (userManager.isLoggedIn() && userManager.getCurrentUser().isAdmin()) {
+                    Intent intent = new Intent(MainActivity.this, UnifiedAdminDashboardActivity.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(MainActivity.this, "Please login as admin to access this feature", Toast.LENGTH_SHORT).show();
+                    redirectToLogin();
+                }
+            }
+        });
     }
     
     private void redirectToLogin() {

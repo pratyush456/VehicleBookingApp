@@ -40,7 +40,7 @@ public class NotificationHelper {
         String content = bookingRequest.getBookingSummary();
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_car_24) // Using car icon for vehicle booking notifications
+                .setSmallIcon(R.drawable.ic_notification) // Notification bell icon
                 .setContentTitle(title)
                 .setContentText("New booking from " + bookingRequest.getSource() + " to " + bookingRequest.getDestination())
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
