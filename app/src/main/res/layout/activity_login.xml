@@ -13,42 +13,52 @@
         android:padding="24dp"
         android:gravity="center">
 
-        <!-- Header Section with Gradient Background -->
+        <!-- OSRTC-Style Header Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
             android:background="@drawable/gradient_primary"
-            android:padding="48dp"
-            android:layout_marginBottom="32dp">
+            android:padding="40dp"
+            android:layout_marginBottom="24dp">
 
-            <!-- App Logo -->
-            <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_marginBottom="16dp"
-                android:src="@drawable/ic_car_24"
-                android:tint="@color/white"
-                android:contentDescription="Vehicle Booking Logo" />
+            <!-- App Logo Circle -->
+            <LinearLayout
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/circle_background"
+                android:backgroundTint="@color/white"
+                android:gravity="center"
+                android:elevation="4dp"
+                android:layout_marginBottom="16dp">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/ic_car_24"
+                    android:tint="@color/primary_color"
+                    android:contentDescription="Vehicle Booking Logo" />
+            </LinearLayout>
 
             <!-- App Title -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Vehicle Booking"
-                style="@style/HeadlineStyle"
+                android:textSize="28sp"
+                android:textStyle="bold"
                 android:textColor="@color/white"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="4dp" />
 
             <!-- Subtitle -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Your journey starts here"
-                style="@style/BodyStyle"
+                android:text="Book. Travel. Enjoy."
+                android:textSize="14sp"
                 android:textColor="@color/white"
-                android:alpha="0.9" />
+                android:alpha="0.95" />
         </LinearLayout>
 
         <!-- Login Form Card -->
@@ -65,19 +75,21 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Welcome Back"
-                style="@style/TitleStyle"
+                android:text="Login"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
                 android:layout_gravity="center"
                 android:layout_marginBottom="8dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sign in to continue"
-                style="@style/BodyStyle"
+                android:text="Enter your credentials to continue"
+                android:textSize="14sp"
                 android:textColor="@color/text_secondary"
                 android:layout_gravity="center"
-                android:layout_marginBottom="32dp" />
+                android:layout_marginBottom="24dp" />
 
             <!-- Username Input -->
             <com.google.android.material.textfield.TextInputLayout

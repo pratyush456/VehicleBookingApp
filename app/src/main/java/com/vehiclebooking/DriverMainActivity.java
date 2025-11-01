@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import com.google.android.material.card.MaterialCardView;
 
 public class DriverMainActivity extends AppCompatActivity {
@@ -102,8 +103,8 @@ public class DriverMainActivity extends AppCompatActivity {
         availabilitySwitch.setChecked(isAvailable);
         statusText.setText(isAvailable ? "Status: Available for rides" : "Status: Offline");
         statusText.setTextColor(isAvailable ? 
-            getResources().getColor(android.R.color.holo_green_dark) : 
-            getResources().getColor(android.R.color.holo_red_dark));
+            ContextCompat.getColor(this, android.R.color.holo_green_dark) : 
+            ContextCompat.getColor(this, android.R.color.holo_red_dark));
     }
 
     private void updateDriverAvailability(boolean isAvailable) {
@@ -113,8 +114,8 @@ public class DriverMainActivity extends AppCompatActivity {
         
         statusText.setText(isAvailable ? "Status: Available for rides" : "Status: Offline");
         statusText.setTextColor(isAvailable ? 
-            getResources().getColor(android.R.color.holo_green_dark) : 
-            getResources().getColor(android.R.color.holo_red_dark));
+            ContextCompat.getColor(this, android.R.color.holo_green_dark) : 
+            ContextCompat.getColor(this, android.R.color.holo_red_dark));
             
         Toast.makeText(this, isAvailable ? "You are now available for rides" : "You are now offline", 
                       Toast.LENGTH_SHORT).show();

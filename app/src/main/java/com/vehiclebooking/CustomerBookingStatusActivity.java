@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import java.util.List;
 import java.util.Collections;
 import java.util.Comparator;
@@ -149,7 +150,7 @@ public class CustomerBookingStatusActivity extends AppCompatActivity {
         
         String message = getStatusMessage(booking.getStatus());
         statusMessage.setText(message);
-        statusMessage.setTextColor(getResources().getColor(getStatusColorResource(booking.getStatus())));
+        statusMessage.setTextColor(ContextCompat.getColor(this, getStatusColorResource(booking.getStatus())));
         bookingContainer.addView(statusMessage);
         
         // Action buttons
@@ -170,7 +171,7 @@ public class CustomerBookingStatusActivity extends AppCompatActivity {
             Button cancelButton = new Button(this);
             cancelButton.setText("❌ Cancel");
             cancelButton.setTextSize(12);
-            cancelButton.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+            cancelButton.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
             cancelButton.setOnClickListener(v -> cancelBooking(booking));
             buttonsContainer.addView(cancelButton);
         }

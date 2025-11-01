@@ -25,56 +25,133 @@
             android:orientation="vertical"
             android:padding="24dp">
 
-            <!-- Enhanced Welcome Card with Gradient -->
+            <!-- OSRTC-Style Hero Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
-                app:cardElevation="12dp"
-                app:cardCornerRadius="20dp">
+                android:layout_marginBottom="24dp"
+                app:cardElevation="8dp"
+                app:cardCornerRadius="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:background="@drawable/gradient_primary"
-                    android:padding="32dp"
-                    android:gravity="center">
+                    android:background="@drawable/gradient_primary">
 
-                    <!-- Profile Avatar -->
+                    <!-- Welcome Section -->
                     <LinearLayout
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:background="@drawable/circle_background"
-                        android:backgroundTint="@color/white"
-                        android:gravity="center"
-                        android:layout_marginBottom="16dp">
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="20dp"
+                        android:gravity="center_vertical">
 
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:src="@drawable/ic_person_24"
-                            android:tint="@color/primary_color" />
+                        <!-- Profile Avatar -->
+                        <LinearLayout
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:background="@drawable/circle_background"
+                            android:backgroundTint="@color/white"
+                            android:gravity="center"
+                            android:layout_marginEnd="16dp">
+
+                            <ImageView
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:src="@drawable/ic_person_24"
+                                android:tint="@color/primary_color" />
+                        </LinearLayout>
+
+                        <!-- Welcome Text -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Hello,"
+                                android:textSize="14sp"
+                                android:textColor="@color/white"
+                                android:alpha="0.9" />
+
+                            <TextView
+                                android:id="@+id/tv_welcome"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Traveler"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/white" />
+                        </LinearLayout>
                     </LinearLayout>
 
-                    <!-- Welcome Text -->
-                    <TextView
-                        android:id="@+id/tv_welcome"
-                        android:layout_width="wrap_content"
+                    <!-- Quick Stats Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Welcome back!"
-                        style="@style/TitleStyle"
-                        android:textColor="@color/white"
-                        android:layout_marginBottom="8dp" />
+                        android:orientation="horizontal"
+                        android:background="@color/white"
+                        android:padding="16dp"
+                        android:weightSum="2">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Ready to book your next adventure?"
-                        style="@style/BodyStyle"
-                        android:textColor="@color/white"
-                        android:alpha="0.9"
-                        android:gravity="center" />
+                        <!-- Total Trips -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textSize="24sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/primary_color" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Total Trips"
+                                android:textSize="12sp"
+                                android:textColor="@color/text_secondary" />
+                        </LinearLayout>
+
+                        <!-- Divider -->
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/divider" />
+
+                        <!-- Upcoming Trips -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textSize="24sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/secondary_color" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Upcoming"
+                                android:textSize="12sp"
+                                android:textColor="@color/text_secondary" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -82,18 +159,20 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Quick Actions"
-                style="@style/SubtitleStyle"
-                android:layout_marginBottom="20dp" />
+                android:text="Services"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginBottom="16dp" />
 
-            <!-- Enhanced New Booking Card -->
+            <!-- OSRTC-Style New Booking Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_new_booking"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardElevation="8dp"
-                app:cardCornerRadius="16dp"
+                android:layout_marginBottom="12dp"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="12dp"
                 app:cardBackgroundColor="@color/surface_color"
                 android:clickable="true"
                 android:focusable="true"
@@ -103,23 +182,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="24dp"
-                    android:gravity="center_vertical">
+                    android:padding="16dp"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/gradient_primary">
 
-                    <!-- Enhanced Icon with Gradient Background -->
-                    <LinearLayout
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:layout_marginEnd="20dp"
-                        android:background="@drawable/gradient_primary"
-                        android:gravity="center">
-
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/ic_car_24"
-                            android:tint="@color/white" />
-                    </LinearLayout>
+                    <!-- Icon -->
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="16dp"
+                        android:src="@drawable/ic_car_24"
+                        android:tint="@color/white"
+                        android:padding="8dp"
+                        android:background="@drawable/circle_background"
+                        android:backgroundTint="#44FFFFFF" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -130,22 +206,26 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Book New Ride"
-                            style="@style/SubtitleStyle"
-                            android:layout_marginBottom="4dp" />
+                            android:text="Book Vehicle"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/white"
+                            android:layout_marginBottom="2dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Schedule your next journey with ease"
-                            style="@style/CaptionStyle" />
+                            android:text="Start your journey now"
+                            android:textSize="13sp"
+                            android:textColor="@color/white"
+                            android:alpha="0.9" />
                     </LinearLayout>
 
                     <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:src="@drawable/ic_arrow_forward_24"
-                        android:tint="@color/primary_color" />
+                        android:tint="@color/white" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -155,13 +235,13 @@
                 android:layout_height="0dp"
                 android:visibility="gone" />
 
-            <!-- My Bookings Button -->
+            <!-- OSRTC-Style My Bookings Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_my_bookings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardElevation="6dp"
+                android:layout_marginBottom="12dp"
+                app:cardElevation="2dp"
                 app:cardCornerRadius="12dp"
                 android:clickable="true"
                 android:focusable="true"
@@ -171,18 +251,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="20dp"
+                    android:padding="16dp"
                     android:gravity="center_vertical">
 
-                    <ImageView
+                    <!-- Icon with Circle Background -->
+                    <LinearLayout
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:layout_marginEnd="16dp"
-                        android:src="@drawable/ic_history_24"
                         android:background="@drawable/circle_background"
-                        android:backgroundTint="@color/secondary_color"
-                        android:tint="@color/white"
-                        android:padding="12dp" />
+                        android:backgroundTint="#FFE8F5"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_history_24"
+                            android:tint="@color/secondary_color" />
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -201,16 +287,16 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="View and manage your trips"
-                            android:textSize="12sp"
+                            android:text="View trip history"
+                            android:textSize="13sp"
                             android:textColor="@color/text_secondary" />
                     </LinearLayout>
 
                     <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:src="@drawable/ic_arrow_forward_24"
-                        android:tint="@color/text_secondary" />
+                        android:tint="@color/text_muted" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -220,13 +306,13 @@
                 android:layout_height="0dp"
                 android:visibility="gone" />
 
-            <!-- Profile Button -->
+            <!-- OSRTC-Style Profile Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardElevation="6dp"
+                android:layout_marginBottom="12dp"
+                app:cardElevation="2dp"
                 app:cardCornerRadius="12dp"
                 android:clickable="true"
                 android:focusable="true"
@@ -236,18 +322,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="20dp"
+                    android:padding="16dp"
                     android:gravity="center_vertical">
 
-                    <ImageView
+                    <!-- Icon with Circle Background -->
+                    <LinearLayout
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:layout_marginEnd="16dp"
-                        android:src="@drawable/ic_person_24"
                         android:background="@drawable/circle_background"
-                        android:backgroundTint="@color/accent_color"
-                        android:tint="@color/white"
-                        android:padding="12dp" />
+                        android:backgroundTint="#E0F2F1"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_person_24"
+                            android:tint="@color/accent_color" />
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -266,16 +358,16 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Update your information"
-                            android:textSize="12sp"
+                            android:text="Manage account"
+                            android:textSize="13sp"
                             android:textColor="@color/text_secondary" />
                     </LinearLayout>
 
                     <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:src="@drawable/ic_arrow_forward_24"
-                        android:tint="@color/text_secondary" />
+                        android:tint="@color/text_muted" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

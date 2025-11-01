@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import java.util.List;
 import java.util.Collections;
 import java.util.Comparator;
@@ -129,7 +130,7 @@ public class UnifiedAdminDashboardActivity extends AppCompatActivity {
         headerText.setTextSize(16);
         headerText.setTypeface(null, android.graphics.Typeface.BOLD);
         headerText.setPadding(0, 20, 0, 10);
-        headerText.setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
+        headerText.setTextColor(ContextCompat.getColor(this, android.R.color.holo_blue_dark));
         recordsContainer.addView(headerText);
     }
 
