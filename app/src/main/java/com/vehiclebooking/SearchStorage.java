@@ -12,52 +12,37 @@ import java.util.Comparator;
 import java.util.List;
 
 public class SearchStorage {
-    private static final String PREFS_NAME = "vehicle_search_storage";
-    private static final String SEARCH_RECORDS_KEY = "search_records";
-    private static Gson gson = new Gson();
-
+    
     /**
      * Save a new search record to storage
      */
     public static void saveSearchRecord(Context context, VehicleSearchActivity.SearchRecord searchRecord) {
-        List<VehicleSearchActivity.SearchRecord> records = getSearchRecords(context);
+        SearchRecordDao dao = AppDatabase.getDatabase(context).searchRecordDao();
         
         // Check if record with same phone number and timestamp already exists
-        boolean recordExists = false;
-        for (VehicleSearchActivity.SearchRecord existing : records) {
-            if (existing.phoneNumber.equals(searchRecord.phoneNumber) && 
-                existing.timestamp.equals(searchRecord.timestamp)) {
-                recordExists = true;
-                break;
-            }
-        }
+        SearchRecordEntity existing = dao.getSearchRecord(searchRecord.phoneNumber, searchRecord.timestamp);
         
         // Add new record if it doesn't exist
-        if (!recordExists) {
-            records.add(searchRecord);
-            saveSearchRecords(context, records);
+        if (existing == null) {
+            dao.insertSearchRecord(new SearchRecordEntity(searchRecord));
         }
     }
 
     /**
      * Update vehicle interest for an existing search record
      */
+    /**
+     * Update vehicle interest for an existing search record
+     */
     public static void updateVehicleInterest(Context context, String phoneNumber, String vehicleInterest) {
-        List<VehicleSearchActivity.SearchRecord> records = getSearchRecords(context);
+        SearchRecordDao dao = AppDatabase.getDatabase(context).searchRecordDao();
+        List<SearchRecordEntity> entities = dao.getAllSearchRecords();
         
-        // Find the most recent record for this phone number and update it
-        for (int i = records.size() - 1; i >= 0; i--) {
-            VehicleSearchActivity.SearchRecord record = records.get(i);
+        SearchRecordEntity mostRecent = null;
+        
+        // Find the most recent record for this phone number
+        for (SearchRecordEntity record : entities) {
             if (record.phoneNumber.equals(phoneNumber)) {
-                if (record.vehicleInterest.isEmpty()) {
-                    record.vehicleInterest = vehicleInterest;
-                } else {
-                    record.vehicleInterest += ", " + vehicleInterest;
-                }
-                saveSearchRecords(context, records);
-                break;
-            }
-        }
                 if (mostRecent == null || record.timestamp.compareTo(mostRecent.timestamp) > 0) {
                     mostRecent = record;
                 }
@@ -65,7 +50,11 @@ public class SearchStorage {
         }
         
         if (mostRecent != null) {
-            mostRecent.vehicleInterest = vehicleInterest;
+            if (mostRecent.vehicleInterest == null || mostRecent.vehicleInterest.isEmpty()) {
+                mostRecent.vehicleInterest = vehicleInterest;
+            } else {
+                mostRecent.vehicleInterest += ", " + vehicleInterest;
+            }
             dao.updateSearchRecord(mostRecent);
         }
     }
@@ -156,39 +145,6 @@ public class SearchStorage {
         }
         
         return analytics;
-    }
-
-    /**
-     * Clear all search records (for testing or reset)
-     */
-    public static void clearAllSearchRecords(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        prefs.edit().remove(SEARCH_RECORDS_KEY).apply();
-    }
-
-    /**
-     * Delete a specific search record
-     */
-    public static void deleteSearchRecord(Context context, String phoneNumber, String timestamp) {
-        List<VehicleSearchActivity.SearchRecord> records = getSearchRecords(context);
-        
-        for (int i = 0; i < records.size(); i++) {
-            VehicleSearchActivity.SearchRecord record = records.get(i);
-            if (record.phoneNumber.equals(phoneNumber) && record.timestamp.equals(timestamp)) {
-                records.remove(i);
-                saveSearchRecords(context, records);
-                break;
-            }
-        }
-    }
-
-    /**
-     * Save search records list to storage
-     */
-    private static void saveSearchRecords(Context context, List<VehicleSearchActivity.SearchRecord> records) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        String recordsJson = gson.toJson(records);
-        prefs.edit().putString(SEARCH_RECORDS_KEY, recordsJson).apply();
     }
 
     /**
