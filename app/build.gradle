@@ -173,6 +173,9 @@ dependencies {
     
     // Password hashing with bcrypt
     implementation 'org.mindrot:jbcrypt:0.4'
+    
+    // Biometric Authentication
+    implementation 'androidx.biometric:biometric:1.2.0-alpha05'
 }
 
 // Fix Kotlin dependency conflicts

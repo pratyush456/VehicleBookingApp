@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Biometric Authentication -->
+    <string name="biometric_title">Biometric Authentication</string>
+    <string name="biometric_subtitle">Verify your identity</string>
+    <string name="biometric_description">Use your fingerprint or face to authenticate</string>
+    <string name="biometric_login_title">Quick Login</string>
+    <string name="biometric_login_subtitle">Login with biometrics</string>
+    <string name="biometric_login_description">Use your fingerprint or face to login</string>
+    
+    <!-- Biometric Settings -->
+    <string name="biometric_enable">Enable Biometric Login</string>
+    <string name="biometric_disable">Disable Biometric Login</string>
+    <string name="biometric_setup">Set up biometric authentication for quick and secure login</string>
+    
+    <!-- Biometric Status Messages -->
+    <string name="biometric_success">Authentication successful</string>
+    <string name="biometric_failed">Authentication failed</string>
+    <string name="biometric_error">Authentication error: %s</string>
+    <string name="biometric_not_available">Biometric authentication not available</string>
+    <string name="biometric_not_enrolled">Please enroll fingerprint or face in device settings</string>
+    <string name="biometric_cancelled">Authentication cancelled</string>
+    
+    <!-- Accessibility -->
+    <string name="cd_biometric_toggle">Toggle biometric authentication</string>
+    <string name="cd_biometric_icon">Biometric authentication icon</string>
+</resources>
