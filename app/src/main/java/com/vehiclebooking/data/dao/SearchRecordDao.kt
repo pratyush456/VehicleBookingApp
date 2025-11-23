@@ -3,6 +3,8 @@ package com.vehiclebooking.data.dao
 import androidx.room.*
 import com.vehiclebooking.data.model.SearchRecordEntity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 @Dao
 interface SearchRecordDao {
@@ -35,4 +37,29 @@ interface SearchRecordDao {
 
     @Query("SELECT COUNT(*) FROM search_records")
     fun getSearchRecordCount(): Flow<Int>
+    
+    // Blocking wrappers for Java compatibility
+    fun getAllSearchRecordsBlocking(): List<SearchRecordEntity> = runBlocking {
+        getAllSearchRecords().first()
+    }
+    
+    fun getSearchRecordBlocking(phoneNumber: String, timestamp: String): SearchRecordEntity? = runBlocking {
+        getSearchRecord(phoneNumber, timestamp)
+    }
+    
+    fun getSearchRecordsByStatusBlocking(status: String): List<SearchRecordEntity> = runBlocking {
+        getSearchRecordsByStatus(status).first()
+    }
+    
+    fun insertSearchRecordBlocking(record: SearchRecordEntity) = runBlocking {
+        insertSearchRecord(record)
+    }
+    
+    fun updateSearchRecordBlocking(record: SearchRecordEntity) = runBlocking {
+        updateSearchRecord(record)
+    }
+    
+    fun deleteAllSearchRecordsBlocking() = runBlocking {
+        deleteAllSearchRecords()
+    }
 }

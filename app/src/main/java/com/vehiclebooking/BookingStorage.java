@@ -42,13 +42,13 @@ public class BookingStorage {
         }
         
         // Add new booking
-        bookingDao.insertBooking(new BookingEntity(booking));
+        bookingDao.insertBookingBlocking(new BookingEntity(booking));
     }
 
     @NonNull
     public static List<BookingRequest> getAllBookings(@NonNull Context context) {
         BookingDao bookingDao = AppDatabase.getDatabase(context).bookingDao();
-        List<BookingEntity> entities = bookingDao.getAllBookings();
+        List<BookingEntity> entities = bookingDao.getAllBookingsBlocking();
         
         List<BookingRequest> bookings = new ArrayList<>();
         for (BookingEntity entity : entities) {
@@ -59,7 +59,7 @@ public class BookingStorage {
 
     public static void clearAllBookings(@NonNull Context context) {
         BookingDao bookingDao = AppDatabase.getDatabase(context).bookingDao();
-        bookingDao.deleteAllBookings();
+        bookingDao.deleteAllBookingsBlocking();
     }
 
     /**
@@ -67,7 +67,7 @@ public class BookingStorage {
      */
     public static void updateBooking(@NonNull Context context, @NonNull BookingRequest updatedBooking) {
         BookingDao bookingDao = AppDatabase.getDatabase(context).bookingDao();
-        bookingDao.updateBooking(new BookingEntity(updatedBooking));
+        bookingDao.updateBookingBlocking(new BookingEntity(updatedBooking));
     }
     
     /**

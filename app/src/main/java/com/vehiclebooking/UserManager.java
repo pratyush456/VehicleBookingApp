@@ -35,7 +35,7 @@ public class UserManager {
     // Initialize with default admin user if no users exist
     public void initializeDefaultUsers() {
         UserDao userDao = AppDatabase.getDatabase(context).userDao();
-        List<UserEntity> users = userDao.getAllUsers();
+        List<UserEntity> users = userDao.getAllUsersBlocking();
         if (users.isEmpty()) {
             // Create default admin user
             User admin = new User("admin", "admin@vehiclebooking.com", "1234567890", 
@@ -64,7 +64,7 @@ public class UserManager {
     // User Login
     public boolean login(String username, String password) {
         UserDao userDao = AppDatabase.getDatabase(context).userDao();
-        UserEntity userEntity = userDao.getUserByUsername(username);
+        UserEntity userEntity = userDao.getUserByUsernameBlocking(username);
         
         if (userEntity != null && 
             userEntity.password.equals(password) && 
@@ -98,7 +98,7 @@ public class UserManager {
     private boolean saveUser(User user) {
         try {
             UserDao userDao = AppDatabase.getDatabase(context).userDao();
-            userDao.insertUser(new UserEntity(user));
+            userDao.insertUserBlocking(new UserEntity(user));
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -109,7 +109,7 @@ public class UserManager {
     // Get all users
     private List<User> getAllUsers() {
         UserDao userDao = AppDatabase.getDatabase(context).userDao();
-        List<UserEntity> entities = userDao.getAllUsers();
+        List<UserEntity> entities = userDao.getAllUsersBlocking();
         List<User> users = new ArrayList<>();
         for (UserEntity entity : entities) {
             users.add(entity.toUser());
@@ -120,13 +120,13 @@ public class UserManager {
     // Check if username exists
     private boolean isUsernameExists(String username) {
         UserDao userDao = AppDatabase.getDatabase(context).userDao();
-        return userDao.getUserByUsername(username) != null;
+        return userDao.getUserByUsernameBlocking(username) != null;
     }
     
     // Check if email exists
     private boolean isEmailExists(String email) {
         UserDao userDao = AppDatabase.getDatabase(context).userDao();
-        return userDao.getUserByEmail(email) != null;
+        return userDao.getUserByEmailBlocking(email) != null;
     }
     
     // Save current user session
@@ -176,7 +176,7 @@ public class UserManager {
     public boolean updateUser(User updatedUser) {
         try {
             UserDao userDao = AppDatabase.getDatabase(context).userDao();
-            userDao.updateUser(new UserEntity(updatedUser));
+            userDao.updateUserBlocking(new UserEntity(updatedUser));
             
             if (currentUser != null && currentUser.getUserId().equals(updatedUser.getUserId())) {
                 currentUser = updatedUser;

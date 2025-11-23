@@ -20,11 +20,11 @@ public class SearchStorage {
         SearchRecordDao dao = AppDatabase.getDatabase(context).searchRecordDao();
         
         // Check if record with same phone number and timestamp already exists
-        SearchRecordEntity existing = dao.getSearchRecord(searchRecord.phoneNumber, searchRecord.timestamp);
+        SearchRecordEntity existing = dao.getSearchRecordBlocking(searchRecord.phoneNumber, searchRecord.timestamp);
         
         // Add new record if it doesn't exist
         if (existing == null) {
-            dao.insertSearchRecord(new SearchRecordEntity(searchRecord));
+            dao.insertSearchRecordBlocking(new SearchRecordEntity(searchRecord));
         }
     }
 
@@ -36,7 +36,7 @@ public class SearchStorage {
      */
     public static void updateVehicleInterest(Context context, String phoneNumber, String vehicleInterest) {
         SearchRecordDao dao = AppDatabase.getDatabase(context).searchRecordDao();
-        List<SearchRecordEntity> entities = dao.getAllSearchRecords();
+        List<SearchRecordEntity> entities = dao.getAllSearchRecordsBlocking();
         
         SearchRecordEntity mostRecent = null;
         
@@ -55,14 +55,14 @@ public class SearchStorage {
             } else {
                 mostRecent.vehicleInterest += ", " + vehicleInterest;
             }
-            dao.updateSearchRecord(mostRecent);
+            dao.updateSearchRecordBlocking(mostRecent);
         }
     }
     
     // Get all search records (for admin dashboard)
     public static List<VehicleSearchActivity.SearchRecord> getAllSearchRecords(Context context) {
         SearchRecordDao dao = AppDatabase.getDatabase(context).searchRecordDao();
-        List<SearchRecordEntity> entities = dao.getAllSearchRecords();
+        List<SearchRecordEntity> entities = dao.getAllSearchRecordsBlocking();
         
         List<VehicleSearchActivity.SearchRecord> records = new ArrayList<>();
         for (SearchRecordEntity entity : entities) {
@@ -83,7 +83,7 @@ public class SearchStorage {
     // Get records by status
     public static List<VehicleSearchActivity.SearchRecord> getSearchRecordsByStatus(Context context, String status) {
         SearchRecordDao dao = AppDatabase.getDatabase(context).searchRecordDao();
-        List<SearchRecordEntity> entities = dao.getSearchRecordsByStatus(status);
+        List<SearchRecordEntity> entities = dao.getSearchRecordsByStatusBlocking(status);
         
         List<VehicleSearchActivity.SearchRecord> records = new ArrayList<>();
         for (SearchRecordEntity entity : entities) {
@@ -101,7 +101,7 @@ public class SearchStorage {
     // Clear all records (for testing/maintenance)
     public static void clearAllRecords(Context context) {
         SearchRecordDao dao = AppDatabase.getDatabase(context).searchRecordDao();
-        dao.deleteAllSearchRecords();
+        dao.deleteAllSearchRecordsBlocking();
     }
     
     // Alias for compatibility
@@ -117,20 +117,20 @@ public class SearchStorage {
     // Update search status
     public static void updateSearchStatus(Context context, String phoneNumber, String timestamp, String newStatus) {
         SearchRecordDao dao = AppDatabase.getDatabase(context).searchRecordDao();
-        SearchRecordEntity entity = dao.getSearchRecord(phoneNumber, timestamp);
+        SearchRecordEntity entity = dao.getSearchRecordBlocking(phoneNumber, timestamp);
         if (entity != null) {
             entity.status = newStatus;
-            dao.updateSearchRecord(entity);
+            dao.updateSearchRecordBlocking(entity);
         }
     }
     
     // Update admin notes
     public static void updateAdminNotes(Context context, String phoneNumber, String timestamp, String notes) {
         SearchRecordDao dao = AppDatabase.getDatabase(context).searchRecordDao();
-        SearchRecordEntity entity = dao.getSearchRecord(phoneNumber, timestamp);
+        SearchRecordEntity entity = dao.getSearchRecordBlocking(phoneNumber, timestamp);
         if (entity != null) {
             entity.adminNotes = notes;
-            dao.updateSearchRecord(entity);
+            dao.updateSearchRecordBlocking(entity);
         }
     }
 
