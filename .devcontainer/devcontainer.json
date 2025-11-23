@@ -1,37 +1,21 @@
 {
-  "name": "Android Development",
-  "image": "mcr.microsoft.com/devcontainers/java:1-21-bullseye",
-  "features": {
-    "ghcr.io/devcontainers/features/android-sdk:1": {
-      "version": "latest",
-      "buildTools": "34.0.0",
-      "cmdlineTools": "latest",
-      "platformTools": "latest",
-      "platforms": "android-34"
-    },
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "18"
-    }
-  },
+  "name": "VehicleBookingApp - Android (Ubuntu + OpenJDK17)",
+  "dockerFile": "Dockerfile",
+  "workspaceFolder": "/workspaces/VehicleBookingApp",
+  "forwardPorts": [
+    8081
+  ],
   "customizations": {
     "vscode": {
       "extensions": [
-        "vscjava.vscode-java-pack",
+        "ms-azuretools.vscode-docker",
         "redhat.java",
-        "vscjava.vscode-gradle",
-        "ms-vscode.vscode-json"
-      ],
-      "settings": {
-        "java.home": "/usr/lib/jvm/msopenjdk-current"
-      }
+        "vscjava.vscode-java-pack",
+        "msjsdiag.debugger-for-chrome"
+      ]
     }
   },
-  "postCreateCommand": "chmod +x gradlew && ./gradlew --version",
-  "forwardPorts": [8080, 5037],
-  "portsAttributes": {
-    "8080": {
-      "label": "Preview Port",
-      "onAutoForward": "notify"
-    }
+  "containerEnv": {
+    "DEBIAN_FRONTEND": "noninteractive"
   }
 }
