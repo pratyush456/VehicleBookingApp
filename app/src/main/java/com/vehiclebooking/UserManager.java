@@ -6,6 +6,8 @@ import com.google.gson.Gson;
 import com.vehiclebooking.data.AppDatabase;
 import com.vehiclebooking.data.dao.UserDao;
 import com.vehiclebooking.data.model.UserEntity;
+import com.vehiclebooking.security.PasswordHasher;
+import com.vehiclebooking.security.SecurePreferences;
 import com.vehiclebooking.utils.GsonProvider;
 
 import java.util.ArrayList;
@@ -37,9 +39,10 @@ public class UserManager {
         UserDao userDao = AppDatabase.getDatabase(context).userDao();
         List<UserEntity> users = userDao.getAllUsersBlocking();
         if (users.isEmpty()) {
-            // Create default admin user
+            // Create default admin user with hashed password
+            String hashedPassword = PasswordHasher.INSTANCE.hash("admin123");
             User admin = new User("admin", "admin@vehiclebooking.com", "1234567890", 
-                                "admin123", UserRole.ADMIN, "System Administrator");
+                                hashedPassword, UserRole.ADMIN, "System Administrator");
             saveUser(admin);
         }
     }
@@ -57,7 +60,9 @@ public class UserManager {
             return false;
         }
         
-        User newUser = new User(username, email, phoneNumber, password, role, fullName);
+        // Hash password before storing
+        String hashedPassword = PasswordHasher.INSTANCE.hash(password);
+        User newUser = new User(username, email, phoneNumber, hashedPassword, role, fullName);
         return saveUser(newUser);
     }
     
@@ -67,8 +72,8 @@ public class UserManager {
         UserEntity userEntity = userDao.getUserByUsernameBlocking(username);
         
         if (userEntity != null && 
-            userEntity.password.equals(password) && 
-            userEntity.isActive) {
+            userEntity.isActive && 
+            PasswordHasher.INSTANCE.verify(password, userEntity.password)) {
             
             currentUser = userEntity.toUser();
             saveCurrentUserSession();
@@ -85,8 +90,7 @@ public class UserManager {
     
     // Check if user is logged in
     public boolean isLoggedIn() {
-        SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
-        return prefs.getBoolean(IS_LOGGED_IN_KEY, false) && currentUser != null;
+        return SecurePreferences.INSTANCE.getBoolean(IS_LOGGED_IN_KEY, false) && currentUser != null;
     }
     
     // Get current logged in user
@@ -131,21 +135,17 @@ public class UserManager {
     
     // Save current user session
     private void saveCurrentUserSession() {
-        SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         Gson gson = GsonProvider.getGson();
         String userJson = gson.toJson(currentUser);
-        prefs.edit()
-                .putString(CURRENT_USER_KEY, userJson)
-                .putBoolean(IS_LOGGED_IN_KEY, true)
-                .apply();
+        SecurePreferences.INSTANCE.putString(CURRENT_USER_KEY, userJson);
+        SecurePreferences.INSTANCE.putBoolean(IS_LOGGED_IN_KEY, true);
     }
     
     // Load current user session
     private void loadCurrentUser() {
-        SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
-        if (prefs.getBoolean(IS_LOGGED_IN_KEY, false)) {
-            String userJson = prefs.getString(CURRENT_USER_KEY, "");
-            if (!userJson.isEmpty()) {
+        if (SecurePreferences.INSTANCE.getBoolean(IS_LOGGED_IN_KEY, false)) {
+            String userJson = SecurePreferences.INSTANCE.getString(CURRENT_USER_KEY, "");
+            if (userJson != null && !userJson.isEmpty()) {
                 Gson gson = GsonProvider.getGson();
                 currentUser = gson.fromJson(userJson, User.class);
             }
@@ -154,11 +154,8 @@ public class UserManager {
     
     // Clear current user session
     private void clearCurrentUserSession() {
-        SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
-        prefs.edit()
-                .remove(CURRENT_USER_KEY)
-                .putBoolean(IS_LOGGED_IN_KEY, false)
-                .apply();
+        SecurePreferences.INSTANCE.remove(CURRENT_USER_KEY);
+        SecurePreferences.INSTANCE.putBoolean(IS_LOGGED_IN_KEY, false);
     }
     
     // Get users by role (for admin to manage)
