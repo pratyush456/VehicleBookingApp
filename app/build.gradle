@@ -163,6 +163,16 @@ dependencies {
     
     // Coroutines for Firebase
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1'
+    
+    // Security - Encrypted Storage
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+    
+    // SQLCipher for Room database encryption
+    implementation 'net.zetetic:android-database-sqlcipher:4.5.4'
+    implementation 'androidx.sqlite:sqlite:2.4.0'
+    
+    // Password hashing with bcrypt
+    implementation 'org.mindrot:jbcrypt:0.4'
 }
 
 // Fix Kotlin dependency conflicts

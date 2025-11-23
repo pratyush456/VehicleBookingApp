@@ -3,10 +3,11 @@ package com.vehiclebooking
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.material.color.DynamicColors
+import com.vehiclebooking.security.SecurePreferences
 
 /**
  * Application class for Vehicle Booking App
- * Handles dynamic colors and dark mode configuration
+ * Handles dynamic colors, dark mode configuration, and security initialization
  */
 class VehicleBookingApp : Application() {
     
@@ -18,13 +19,15 @@ class VehicleBookingApp : Application() {
     override fun onCreate() {
         super.onCreate()
         
+        // Initialize secure encrypted preferences
+        SecurePreferences.init(this)
+        
         // Enable dynamic colors (Android 12+)
         // Colors will adapt to user's wallpaper
         DynamicColors.applyToActivitiesIfAvailable(this)
         
-        // Set default night mode from preferences
-        val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-        val nightMode = prefs.getInt(
+        // Set default night mode from secure preferences
+        val nightMode = SecurePreferences.getInt(
             KEY_NIGHT_MODE,
             AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM // Default: follow system
         )
