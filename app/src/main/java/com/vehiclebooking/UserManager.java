@@ -8,6 +8,7 @@ import com.vehiclebooking.data.dao.UserDao;
 import com.vehiclebooking.data.model.UserEntity;
 import com.vehiclebooking.security.PasswordHasher;
 import com.vehiclebooking.security.SecurePreferences;
+import com.vehiclebooking.security.SecurityLogger;
 import com.vehiclebooking.utils.GsonProvider;
 
 import java.util.ArrayList;
@@ -63,11 +64,27 @@ public class UserManager {
         // Hash password before storing
         String hashedPassword = PasswordHasher.INSTANCE.hash(password);
         User newUser = new User(username, email, phoneNumber, hashedPassword, role, fullName);
-        return saveUser(newUser);
+        boolean success = saveUser(newUser);
+        
+        if (success) {
+            SecurityLogger.INSTANCE.logEvent(context, 
+                SecurityLogger.SecurityEvent.ACCOUNT_CREATED, username, "Role: " + role);
+        }
+        
+        return success;
     }
     
     // User Login
     public boolean login(String username, String password) {
+        // Check if account is locked
+        if (SecurityLogger.INSTANCE.isAccountLocked(context, username)) {
+            int remainingMinutes = SecurityLogger.INSTANCE.getRemainingLockoutTime(context, username);
+            android.widget.Toast.makeText(context, 
+                "Account locked. Try again in " + remainingMinutes + " minutes.", 
+                android.widget.Toast.LENGTH_LONG).show();
+            return false;
+        }
+        
         UserDao userDao = AppDatabase.getDatabase(context).userDao();
         UserEntity userEntity = userDao.getUserByUsernameBlocking(username);
         
@@ -75,15 +92,25 @@ public class UserManager {
             userEntity.isActive && 
             PasswordHasher.INSTANCE.verify(password, userEntity.password)) {
             
+            // Successful login
             currentUser = userEntity.toUser();
             saveCurrentUserSession();
+            SecurityLogger.INSTANCE.logSuccessfulLogin(context, username);
             return true;
         }
+        
+        // Failed login
+        SecurityLogger.INSTANCE.logFailedLogin(context, username, 
+            userEntity == null ? "User not found" : "Invalid password");
         return false;
     }
     
     // Logout
     public void logout() {
+        if (currentUser != null) {
+            SecurityLogger.INSTANCE.logEvent(context, 
+                SecurityLogger.SecurityEvent.LOGOUT, currentUser.getUsername());
+        }
         currentUser = null;
         clearCurrentUserSession();
     }
