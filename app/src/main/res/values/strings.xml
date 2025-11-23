@@ -13,4 +13,5 @@
     <string name="invalid_date">Please select a valid date</string>
 
     <string name="cd_register_button">Register new account</string>
+    <string name="cd_username_input">Username input field</string>
 </resources>
