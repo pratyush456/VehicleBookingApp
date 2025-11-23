@@ -8,9 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
 public class VehicleSearchActivitySimple extends AppCompatActivity {
     private EditText searchQuery;
@@ -34,6 +32,10 @@ public class VehicleSearchActivitySimple extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Initialize ThreeTenABP for java.time backport (API < 26)
+        AndroidThreeTen.init(this);
+        
         setContentView(R.layout.activity_vehicle_search);
         
         initializeViews();
@@ -123,7 +125,7 @@ public class VehicleSearchActivitySimple extends AppCompatActivity {
             searchRecord.searchQuery = query;
             searchRecord.phoneNumber = phone;
             searchRecord.customerName = name; // Name is now mandatory, so always provided
-            searchRecord.timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+            searchRecord.timestamp = DateUtils.formatTimestamp(DateUtils.localDateTimeToTimestamp(DateUtils.now()));
             
             // No location data in simple version
             searchRecord.locationAvailable = false;

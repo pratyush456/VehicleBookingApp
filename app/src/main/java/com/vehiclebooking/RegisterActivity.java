@@ -2,6 +2,8 @@ package com.vehiclebooking;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -9,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -90,36 +93,55 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void handleRegistration() {
-        String fullName = fullNameEditText.getText().toString().trim();
-        String username = usernameEditText.getText().toString().trim();
-        String email = emailEditText.getText().toString().trim();
-        String phoneNumber = phoneNumberEditText.getText().toString().trim();
-        String password = passwordEditText.getText().toString().trim();
-        String confirmPassword = confirmPasswordEditText.getText().toString().trim();
+        // Trim all inputs using utility methods
+        String fullName = BookingStorage.trimAndValidate(
+            fullNameEditText.getText().toString(), "Full Name");
+        String username = BookingStorage.trimAndValidate(
+            usernameEditText.getText().toString(), "Username");
+        String email = BookingStorage.trimAndValidate(
+            emailEditText.getText().toString(), "Email");
+        String phoneNumber = BookingStorage.trimAndValidate(
+            phoneNumberEditText.getText().toString(), "Phone Number");
+        String password = BookingStorage.trimAndValidate(
+            passwordEditText.getText().toString(), "Password");
+        String confirmPassword = BookingStorage.trimAndValidate(
+            confirmPasswordEditText.getText().toString(), "Confirm Password");
         UserRole selectedRole = (UserRole) roleSpinner.getSelectedItem();
 
-        // Validation
-        if (fullName.isEmpty()) {
+        // Validation using utility methods
+        if (!BookingStorage.isFieldValid(fullName, "Full Name")) {
             fullNameEditText.setError("Full name is required");
             return;
         }
 
-        if (username.isEmpty()) {
+        if (!BookingStorage.isFieldValid(username, "Username")) {
             usernameEditText.setError("Username is required");
             return;
         }
 
-        if (email.isEmpty()) {
+        if (!BookingStorage.isFieldValid(email, "Email")) {
             emailEditText.setError("Email is required");
             return;
         }
-
-        if (phoneNumber.isEmpty()) {
-            phoneNumberEditText.setError("Phone number is required");
+        
+        // Validate email format
+        if (!BookingStorage.isValidEmail(email)) {
+            emailEditText.setError("Please enter a valid email address");
             return;
         }
 
-        if (password.isEmpty()) {
+        if (!BookingStorage.isFieldValid(phoneNumber, "Phone Number")) {
+            phoneNumberEditText.setError("Phone number is required");
+            return;
+        }
+        
+        // Validate phone number format
+        if (!BookingStorage.isValidPhoneNumber(phoneNumber)) {
+            phoneNumberEditText.setError("Please enter a valid phone number");
+            return;
+        }
+
+        if (!BookingStorage.isFieldValid(password, "Password")) {
             passwordEditText.setError("Password is required");
             return;
         }
@@ -136,15 +158,17 @@ public class RegisterActivity extends AppCompatActivity {
 
         // Driver-specific validation
         if (selectedRole == UserRole.DRIVER) {
-            String licenseNumber = licenseNumberEditText.getText().toString().trim();
-            String vehicleDetails = vehicleDetailsEditText.getText().toString().trim();
+            String licenseNumber = BookingStorage.trimAndValidate(
+                licenseNumberEditText.getText().toString(), "License Number");
+            String vehicleDetails = BookingStorage.trimAndValidate(
+                vehicleDetailsEditText.getText().toString(), "Vehicle Details");
 
-            if (licenseNumber.isEmpty()) {
+            if (!BookingStorage.isFieldValid(licenseNumber, "License Number")) {
                 licenseNumberEditText.setError("License number is required for drivers");
                 return;
             }
 
-            if (vehicleDetails.isEmpty()) {
+            if (!BookingStorage.isFieldValid(vehicleDetails, "Vehicle Details")) {
                 vehicleDetailsEditText.setError("Vehicle details are required for drivers");
                 return;
             }

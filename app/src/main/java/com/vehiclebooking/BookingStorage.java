@@ -2,12 +2,18 @@ package com.vehiclebooking;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import com.google.gson.GsonBuilder;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.threeten.bp.LocalDate;
 
 public class BookingStorage {
     private static final String PREFERENCES_NAME = "vehicle_bookings";
@@ -25,9 +31,9 @@ public class BookingStorage {
         return getAllBookings(context);
     }
 
-    public static void saveBooking(Context context, BookingRequest booking) {
+    public static void saveBooking(@NonNull Context context, @NonNull BookingRequest booking) {
         SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
-        Gson gson = new Gson();
+        Gson gson = createGson();
         
         // Get existing bookings
         List<BookingRequest> bookings = getAllBookings(context);
@@ -50,47 +56,75 @@ public class BookingStorage {
         prefs.edit().putString(BOOKINGS_KEY, bookingsJson).apply();
     }
 
-    public static List<BookingRequest> getAllBookings(Context context) {
+    @NonNull
+    public static List<BookingRequest> getAllBookings(@NonNull Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         String bookingsJson = prefs.getString(BOOKINGS_KEY, "[]");
         
-        Gson gson = new Gson();
+        Gson gson = createGson();
         Type listType = new TypeToken<List<BookingRequest>>(){}.getType();
         
         List<BookingRequest> bookings = gson.fromJson(bookingsJson, listType);
         return bookings != null ? bookings : new ArrayList<>();
     }
 
-    public static void clearAllBookings(Context context) {
+    public static void clearAllBookings(@NonNull Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         prefs.edit().remove(BOOKINGS_KEY).apply();
     }
 
     /**
-     * Update an existing booking (useful for status changes)
+     * Update an existing booking (useful for status changes and modifications)
      */
-    public static void updateBooking(Context context, BookingRequest updatedBooking) {
+    public static void updateBooking(@NonNull Context context, @NonNull BookingRequest updatedBooking) {
         List<BookingRequest> bookings = getAllBookings(context);
         
-        // Find and update the booking with matching timestamp (unique identifier)
+        // Find and update the booking by booking ID (preferred) or timestamp
+        boolean found = false;
         for (int i = 0; i < bookings.size(); i++) {
-            if (bookings.get(i).getTimestamp() == updatedBooking.getTimestamp()) {
+            BookingRequest existing = bookings.get(i);
+            // Try booking ID first (more reliable)
+            if (updatedBooking.getBookingId() != null && existing.getBookingId() != null &&
+                updatedBooking.getBookingId().equals(existing.getBookingId())) {
                 bookings.set(i, updatedBooking);
+                found = true;
+                break;
+            }
+            // Fallback to timestamp if booking ID not available
+            if (!found && existing.getTimestamp() == updatedBooking.getTimestamp()) {
+                bookings.set(i, updatedBooking);
+                found = true;
                 break;
             }
         }
         
+        // If not found, add as new booking
+        if (!found) {
+            bookings.add(updatedBooking);
+        }
+        
         // Save updated list
         SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
-        Gson gson = new Gson();
+        Gson gson = createGson();
         String bookingsJson = gson.toJson(bookings);
         prefs.edit().putString(BOOKINGS_KEY, bookingsJson).apply();
+    }
+    
+    /**
+     * Create Gson instance with LocalDate adapter for efficient serialization
+     */
+    @NonNull
+    private static Gson createGson() {
+        return new GsonBuilder()
+            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+            .create();
     }
 
     /**
      * Get bookings filtered by status
      */
-    public static List<BookingRequest> getBookingsByStatus(Context context, BookingStatus status) {
+    @NonNull
+    public static List<BookingRequest> getBookingsByStatus(@NonNull Context context, @NonNull BookingStatus status) {
         List<BookingRequest> allBookings = getAllBookings(context);
         List<BookingRequest> filteredBookings = new ArrayList<>();
         
@@ -110,7 +144,8 @@ public class BookingStorage {
     /**
      * Get booking statistics by status
      */
-    public static BookingStats getBookingStats(Context context) {
+    @NonNull
+    public static BookingStats getBookingStats(@NonNull Context context) {
         List<BookingRequest> allBookings = getAllBookings(context);
         BookingStats stats = new BookingStats();
         
@@ -123,6 +158,109 @@ public class BookingStorage {
         }
         
         return stats;
+    }
+
+    /**
+     * Generate a unique booking ID
+     */
+    @NonNull
+    public static String generateUniqueBookingId(@NonNull Context context) {
+        long timestamp = System.currentTimeMillis();
+        int randomComponent = (int)(Math.random() * 1000);
+        String bookingId = "BK" + timestamp + randomComponent;
+        
+        // Ensure this ID doesn't already exist
+        List<BookingRequest> existingBookings = getAllBookings(context);
+        for (BookingRequest existing : existingBookings) {
+            if (bookingId.equals(existing.getBookingId())) {
+                // Very rare collision, generate new ID
+                bookingId = "BK" + System.currentTimeMillis() + (int)(Math.random() * 10000);
+                break;
+            }
+        }
+        
+        return bookingId;
+    }
+    
+    /**
+     * Validate phone number format
+     */
+    public static boolean isValidPhoneNumber(@NonNull String phone) {
+        if (phone == null || phone.trim().isEmpty()) {
+            return false;
+        }
+        // Basic phone number validation - accepts numbers with optional formatting
+        return phone.trim().matches("^[+]?[0-9\\s\\-\\(\\)]{10,}$");
+    }
+    
+    /**
+     * Validate email format
+     */
+    public static boolean isValidEmail(@NonNull String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return false;
+        }
+        String emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+        return email.trim().matches(emailPattern);
+    }
+    
+    /**
+     * Format date for display (using LocalDate)
+     */
+    @NonNull
+    public static String formatDate(@NonNull LocalDate date) {
+        return DateUtils.formatDate(date);
+    }
+    
+    /**
+     * Format date for display with custom format (using LocalDate)
+     */
+    @NonNull
+    public static String formatDate(@NonNull LocalDate date, @NonNull String pattern) {
+        return DateUtils.formatDate(date, pattern);
+    }
+    
+    /**
+     * Format Calendar to LocalDate and format (for compatibility during migration)
+     */
+    @NonNull
+    public static String formatDate(@NonNull java.util.Calendar calendar) {
+        LocalDate date = DateUtils.calendarToLocalDate(calendar);
+        return DateUtils.formatDate(date);
+    }
+    
+    /**
+     * Validate that date is not in the past (using LocalDate)
+     */
+    public static boolean isDateValid(@NonNull LocalDate date) {
+        return DateUtils.isDateValid(date);
+    }
+    
+    /**
+     * Validate Calendar date (for compatibility during migration)
+     */
+    public static boolean isDateValid(@NonNull java.util.Calendar calendar) {
+        LocalDate date = DateUtils.calendarToLocalDate(calendar);
+        return DateUtils.isDateValid(date);
+    }
+    
+    /**
+     * Trim and validate non-empty string
+     */
+    @Nullable
+    public static String trimAndValidate(@Nullable String input, @NonNull String fieldName) {
+        if (input == null) {
+            return null;
+        }
+        String trimmed = input.trim();
+        return trimmed.isEmpty() ? null : trimmed;
+    }
+    
+    /**
+     * Validate required field
+     */
+    public static boolean isFieldValid(@Nullable String field, @NonNull String fieldName) {
+        return field != null && !field.trim().isEmpty();
     }
 
     /**

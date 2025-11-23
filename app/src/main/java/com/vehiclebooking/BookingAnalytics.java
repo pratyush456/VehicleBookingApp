@@ -1,7 +1,7 @@
 package com.vehiclebooking;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
 
 /**
  * Comprehensive analytics engine for booking data analysis
@@ -83,12 +83,12 @@ public class BookingAnalytics {
         
         stats.totalBookings = bookings.size();
         
-        // Calculate current time boundaries
-        Calendar now = Calendar.getInstance();
-        Calendar weekStart = (Calendar) now.clone();
-        weekStart.add(Calendar.DAY_OF_YEAR, -7);
-        Calendar monthStart = (Calendar) now.clone();
-        monthStart.add(Calendar.DAY_OF_YEAR, -30);
+        // Calculate current time boundaries using LocalDate
+        LocalDate today = DateUtils.today();
+        LocalDate weekStart = today.minusDays(7);
+        LocalDate monthStart = today.minusDays(30);
+        long weekStartTimestamp = DateUtils.localDateToTimestamp(weekStart);
+        long monthStartTimestamp = DateUtils.localDateToTimestamp(monthStart);
         
         long totalDuration = 0;
         BookingRequest newest = bookings.get(0);
@@ -113,16 +113,17 @@ public class BookingAnalytics {
             }
             
             // Time-based counting
-            Date bookingDate = new Date(booking.getTimestamp());
-            if (bookingDate.after(weekStart.getTime())) {
+            long bookingTimestamp = booking.getTimestamp();
+            if (bookingTimestamp >= weekStartTimestamp) {
                 stats.thisWeekBookings++;
             }
-            if (bookingDate.after(monthStart.getTime())) {
+            if (bookingTimestamp >= monthStartTimestamp) {
                 stats.thisMonthBookings++;
             }
             
             // Duration calculation (from booking to travel date)
-            totalDuration += booking.getTravelDate().getTime() - booking.getTimestamp();
+            long travelDateTimestamp = DateUtils.localDateToTimestamp(booking.getTravelDate());
+            totalDuration += travelDateTimestamp - bookingTimestamp;
             
             // Find newest and oldest
             if (booking.getTimestamp() > newest.getTimestamp()) {
@@ -169,7 +170,8 @@ public class BookingAnalytics {
             routeStatuses.get(route).add(status);
             
             // Track durations
-            long duration = booking.getTravelDate().getTime() - booking.getTimestamp();
+            long travelDateTimestamp = DateUtils.localDateToTimestamp(booking.getTravelDate());
+            long duration = travelDateTimestamp - booking.getTimestamp();
             Long currentDuration = routeDurations.get(route);
             routeDurations.put(route, (currentDuration == null ? 0L : currentDuration) + duration);
         }
@@ -220,29 +222,25 @@ public class BookingAnalytics {
     public static BookingTrends analyzeBookingTrends(List<BookingRequest> bookings) {
         BookingTrends trends = new BookingTrends();
         
-        SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.getDefault());
-        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
-        SimpleDateFormat hourFormat = new SimpleDateFormat("HH", Locale.getDefault());
-        
         Map<Integer, Integer> hourCounts = new HashMap<>();
         Map<String, Integer> dayCounts = new HashMap<>();
         Map<String, Integer> monthCounts = new HashMap<>();
         
         for (BookingRequest booking : bookings) {
-            Date bookingDate = new Date(booking.getTimestamp());
+            long bookingTimestamp = booking.getTimestamp();
             
             // Daily trends
-            String dayName = dayFormat.format(bookingDate);
+            String dayName = DateUtils.getDayName(bookingTimestamp);
             Integer currentDayCount = dayCounts.get(dayName);
             dayCounts.put(dayName, (currentDayCount == null ? 0 : currentDayCount) + 1);
             
             // Monthly trends
-            String monthName = monthFormat.format(bookingDate);
+            String monthName = DateUtils.getMonthYear(bookingTimestamp);
             Integer currentMonthCount = monthCounts.get(monthName);
             monthCounts.put(monthName, (currentMonthCount == null ? 0 : currentMonthCount) + 1);
             
             // Hour trends
-            int hour = Integer.parseInt(hourFormat.format(bookingDate));
+            int hour = DateUtils.getHour(bookingTimestamp);
             Integer currentHourCount = hourCounts.get(hour);
             hourCounts.put(hour, (currentHourCount == null ? 0 : currentHourCount) + 1);
         }

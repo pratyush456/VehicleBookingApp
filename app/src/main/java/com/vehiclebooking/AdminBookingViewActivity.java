@@ -159,8 +159,7 @@ public class AdminBookingViewActivity extends AppCompatActivity {
             booking.getVehicleType() != null ? booking.getVehicleType() : "Not specified",
             booking.getPhoneNumber() != null ? booking.getPhoneNumber() : "Not provided",
             booking.getStatusDisplayText(),
-            new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault())
-                .format(new java.util.Date(booking.getTimestamp()))
+            DateUtils.formatTimestampShort(booking.getTimestamp())
         );
         
         bookingInfo.setText(bookingText);

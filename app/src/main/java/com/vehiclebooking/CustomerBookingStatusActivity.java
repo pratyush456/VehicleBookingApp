@@ -134,8 +134,7 @@ public class CustomerBookingStatusActivity extends AppCompatActivity {
             booking.getFormattedTravelDate(),
             booking.getVehicleType() != null ? booking.getVehicleType() : "Not specified",
             booking.getStatusDisplayText(),
-            new java.text.SimpleDateFormat("MMM dd, yyyy HH:mm", java.util.Locale.getDefault())
-                .format(new java.util.Date(booking.getTimestamp())),
+            DateUtils.formatTimestampMedium(booking.getTimestamp()),
             booking.getPhoneNumber()
         );
         
@@ -268,8 +267,7 @@ public class CustomerBookingStatusActivity extends AppCompatActivity {
         details.append("📞 Phone: ").append(booking.getPhoneNumber()).append("\n");
         details.append("📊 Current Status: ").append(booking.getStatusDisplayText()).append("\n");
         details.append("🕐 Booking Time: ").append(
-            new java.text.SimpleDateFormat("EEEE, MMMM dd, yyyy 'at' HH:mm", java.util.Locale.getDefault())
-                .format(new java.util.Date(booking.getTimestamp()))
+            DateUtils.formatTimestampLong(booking.getTimestamp())
         ).append("\n\n");
         
         // Show status history if available

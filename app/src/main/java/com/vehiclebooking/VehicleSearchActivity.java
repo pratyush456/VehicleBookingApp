@@ -16,9 +16,7 @@ import androidx.core.content.ContextCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
 public class VehicleSearchActivity extends AppCompatActivity {
     private EditText searchQuery;
@@ -48,6 +46,10 @@ public class VehicleSearchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Initialize ThreeTenABP for java.time backport (API < 26)
+        AndroidThreeTen.init(this);
+        
         setContentView(R.layout.activity_vehicle_search);
         
         initializeViews();
@@ -161,7 +163,7 @@ public class VehicleSearchActivity extends AppCompatActivity {
         searchRecord.searchQuery = query;
         searchRecord.phoneNumber = phone;
         searchRecord.customerName = name.isEmpty() ? "Not provided" : name;
-        searchRecord.timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+        searchRecord.timestamp = DateUtils.formatTimestamp(DateUtils.localDateTimeToTimestamp(DateUtils.now()));
         
         // Add location if available
         if (userLocation != null) {

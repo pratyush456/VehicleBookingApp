@@ -2,11 +2,14 @@ package com.vehiclebooking;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -73,19 +76,62 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        
+        // Add real-time validation
+        setupTextWatchers();
+    }
+    
+    private void setupTextWatchers() {
+        usernameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String username = s.toString().trim();
+                if (username.isEmpty()) {
+                    usernameEditText.setError("Username is required");
+                } else {
+                    usernameEditText.setError(null);
+                }
+            }
+            
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+        
+        passwordEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String password = s.toString().trim();
+                if (password.isEmpty()) {
+                    passwordEditText.setError("Password is required");
+                } else {
+                    passwordEditText.setError(null);
+                }
+            }
+            
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
     }
 
     private void handleLogin() {
-        String username = usernameEditText.getText().toString().trim();
-        String password = passwordEditText.getText().toString().trim();
+        String username = BookingStorage.trimAndValidate(
+            usernameEditText.getText().toString(), "Username");
+        String password = BookingStorage.trimAndValidate(
+            passwordEditText.getText().toString(), "Password");
 
-        // Validation
-        if (username.isEmpty()) {
+        // Validation using utility methods
+        if (!BookingStorage.isFieldValid(username, "Username")) {
             usernameEditText.setError("Username is required");
             return;
         }
 
-        if (password.isEmpty()) {
+        if (!BookingStorage.isFieldValid(password, "Password")) {
             passwordEditText.setError("Password is required");
             return;
         }

@@ -10,16 +10,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingViewHolder> {
     
     private List<BookingRequest> bookingList;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-    private SimpleDateFormat timestampFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault());
     private OnStatusChangeClickListener statusChangeClickListener;
 
     public interface OnStatusChangeClickListener {
@@ -75,12 +70,12 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         holder.travelDate.setText("📅 " + booking.getFormattedTravelDate());
         
         // Set booking timestamp and latest status change info
-        String bookingTime = timestampFormat.format(new Date(booking.getTimestamp()));
+        String bookingTime = DateUtils.formatDateTime12Hour(DateUtils.timestampToLocalDateTime(booking.getTimestamp()));
         
         // Show latest status change if available
         StatusChange latestChange = booking.getLatestStatusChange();
         if (latestChange != null && latestChange.getStatus() != BookingStatus.PENDING) {
-            String statusTime = timestampFormat.format(new Date(latestChange.getTimestamp()));
+            String statusTime = DateUtils.formatDateTime12Hour(DateUtils.timestampToLocalDateTime(latestChange.getTimestamp()));
             holder.bookingTime.setText("Booked: " + bookingTime + "\n" + 
                                     status.getIcon() + " " + status.getDisplayName() + ": " + statusTime);
         } else {

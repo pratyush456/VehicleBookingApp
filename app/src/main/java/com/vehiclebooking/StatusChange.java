@@ -1,23 +1,30 @@
 package com.vehiclebooking;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import androidx.annotation.NonNull;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents a status change event in a booking's history
  */
 public class StatusChange {
-    private BookingStatus status;
-    private long timestamp;
-    private String reason;
+    @SerializedName("status")
+    @NonNull
+    private final BookingStatus status;
+    
+    @SerializedName("timestamp")
+    private final long timestamp;
+    
+    @SerializedName("reason")
+    @NonNull
+    private final String reason;
 
-    public StatusChange(BookingStatus status, long timestamp, String reason) {
+    public StatusChange(@NonNull BookingStatus status, long timestamp, @NonNull String reason) {
         this.status = status;
         this.timestamp = timestamp;
         this.reason = reason;
     }
 
+    @NonNull
     public BookingStatus getStatus() {
         return status;
     }
@@ -26,6 +33,7 @@ public class StatusChange {
         return timestamp;
     }
 
+    @NonNull
     public String getReason() {
         return reason;
     }
@@ -33,9 +41,9 @@ public class StatusChange {
     /**
      * Get formatted timestamp for display
      */
+    @NonNull
     public String getFormattedTimestamp() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault());
-        return dateFormat.format(new Date(timestamp));
+        return DateUtils.formatDateTime12Hour(DateUtils.timestampToLocalDateTime(timestamp));
     }
 
     /**

@@ -8,11 +8,13 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import com.jakewharton.threetenabp.AndroidThreeTen;
+
+import org.threeten.bp.LocalDate;
+
 import java.util.List;
-import java.util.Locale;
 
 public class ModifyBookingActivity extends AppCompatActivity {
 
@@ -24,7 +26,7 @@ public class ModifyBookingActivity extends AppCompatActivity {
     private Button saveChangesButton;
     private Button cancelButton;
     
-    private Calendar selectedCalendar;
+    private LocalDate selectedDate;
     private BookingRequest currentBooking;
     private String bookingId;
     private String phoneNumber;
@@ -32,6 +34,9 @@ public class ModifyBookingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Initialize ThreeTenABP for java.time backport (API < 26)
+        AndroidThreeTen.init(this);
         
         try {
             setContentView(R.layout.activity_modify_booking);
@@ -44,7 +49,7 @@ public class ModifyBookingActivity extends AppCompatActivity {
 
             initializeViews();
             setupClickListeners();
-            selectedCalendar = Calendar.getInstance(); // Initialize calendar before loading data
+            selectedDate = DateUtils.today(); // Initialize date before loading data
             loadBookingData();
         } catch (Exception e) {
             Toast.makeText(this, "Error in modify activity: " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -111,34 +116,36 @@ public class ModifyBookingActivity extends AppCompatActivity {
         destinationEditText.setText(currentBooking.getDestination());
         vehicleTypeEditText.setText(currentBooking.getVehicleType() != null ? currentBooking.getVehicleType() : "");
         
-        // Set the calendar to the current booking date
-        selectedCalendar.setTime(currentBooking.getTravelDate());
+        // Set the date to the current booking date
+        selectedDate = currentBooking.getTravelDate();
         updateSelectedDateDisplay();
     }
 
     private void showDatePicker() {
+        LocalDate today = DateUtils.today();
         DatePickerDialog datePickerDialog = new DatePickerDialog(
             this,
             new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                    selectedCalendar.set(year, month, dayOfMonth);
+                    // DatePicker months are 0-based, LocalDate months are 1-based
+                    selectedDate = LocalDate.of(year, month + 1, dayOfMonth);
                     updateSelectedDateDisplay();
                 }
             },
-            selectedCalendar.get(Calendar.YEAR),
-            selectedCalendar.get(Calendar.MONTH),
-            selectedCalendar.get(Calendar.DAY_OF_MONTH)
+            selectedDate.getYear(),
+            selectedDate.getMonthValue() - 1, // DatePicker uses 0-based months
+            selectedDate.getDayOfMonth()
         );
         
         // Set minimum date to today
-        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+        long todayTimestamp = DateUtils.localDateToTimestamp(today);
+        datePickerDialog.getDatePicker().setMinDate(todayTimestamp);
         datePickerDialog.show();
     }
 
     private void updateSelectedDateDisplay() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        String formattedDate = dateFormat.format(selectedCalendar.getTime());
+        String formattedDate = DateUtils.formatDate(selectedDate);
         selectedDateText.setText("Selected Date: " + formattedDate);
     }
 
@@ -159,18 +166,22 @@ public class ModifyBookingActivity extends AppCompatActivity {
         boolean hasChanges = !source.equals(currentBooking.getSource()) ||
                            !destination.equals(currentBooking.getDestination()) ||
                            !vehicleType.equals(currentBooking.getVehicleType() != null ? currentBooking.getVehicleType() : "") ||
-                           !selectedCalendar.getTime().equals(currentBooking.getTravelDate());
+                           !selectedDate.equals(currentBooking.getTravelDate());
 
         if (!hasChanges) {
             Toast.makeText(this, "No changes detected", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Update the booking
-        currentBooking.setSource(source);
-        currentBooking.setDestination(destination);
-        currentBooking.setVehicleType(vehicleType);
-        currentBooking.setTravelDate(selectedCalendar.getTime());
+        // Create modified copy (preserves booking ID, status, history)
+        BookingRequest updatedBooking = currentBooking.createModifiedCopy(source, destination, selectedDate);
+        updatedBooking.setVehicleType(vehicleType);
+        
+        // Update booking in storage
+        BookingStorage.updateBooking(this, updatedBooking);
+        
+        // Update current booking reference
+        currentBooking = updatedBooking;
         
         // If booking was confirmed, change it back to pending after modification
         BookingStatus originalStatus = currentBooking.getStatus();

@@ -1,59 +1,23 @@
 package com.vehiclebooking;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Context;
-import android.os.Build;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 public class NotificationHelper {
-    private static final String CHANNEL_ID = "BOOKING_NOTIFICATIONS";
-    private static final String CHANNEL_NAME = "Vehicle Booking Notifications";
-    private static final String CHANNEL_DESCRIPTION = "Notifications for new vehicle booking requests";
     
     private Context context;
-    private NotificationManagerCompat notificationManager;
 
     public NotificationHelper(Context context) {
         this.context = context;
-        this.notificationManager = NotificationManagerCompat.from(context);
-        createNotificationChannel();
-    }
-
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                CHANNEL_ID,
-                CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_HIGH
-            );
-            channel.setDescription(CHANNEL_DESCRIPTION);
-
-            NotificationManager manager = context.getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
-        }
     }
 
     public void sendBookingNotification(BookingRequest bookingRequest) {
         String title = "New Vehicle Booking Request";
-        String content = bookingRequest.getBookingSummary();
+        String content = "New booking from " + bookingRequest.getSource() + " to " + bookingRequest.getDestination() + "\n" + bookingRequest.getBookingSummary();
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification) // Notification bell icon
-                .setContentTitle(title)
-                .setContentText("New booking from " + bookingRequest.getSource() + " to " + bookingRequest.getDestination())
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
-                .setDefaults(NotificationCompat.DEFAULT_ALL);
-
-        try {
-            notificationManager.notify(generateNotificationId(), builder.build());
-        } catch (SecurityException e) {
-            // Handle the case where notification permission is not granted
-            e.printStackTrace();
-        }
+        scheduleNotification(title, content);
 
         // Also save booking to local storage for future reference
         BookingStorage.saveBooking(context, bookingRequest);
@@ -69,30 +33,9 @@ public class NotificationHelper {
 
     private void sendStatusUpdateNotification(BookingRequest booking, BookingStatus status) {
         String title = "Booking Status Update " + status.getIcon();
-        String shortText = "Status changed to " + status.getDisplayName();
         String detailedText = createStatusUpdateMessage(booking, status);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setContentTitle(title)
-                .setContentText(shortText)
-                .setStyle(new NotificationCompat.BigTextStyle()
-                         .bigText(detailedText)
-                         .setBigContentTitle(title))
-                .setPriority(getNotificationPriority(status))
-                .setAutoCancel(true)
-                .setColor(status.getColor());
-
-        // Add action button for completed bookings
-        if (status == BookingStatus.COMPLETED) {
-            builder.addAction(android.R.drawable.ic_dialog_email, "Rate Trip", null);
-        }
-
-        try {
-            notificationManager.notify(generateNotificationId(), builder.build());
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        }
+        scheduleNotification(title, detailedText);
     }
 
     private String createStatusUpdateMessage(BookingRequest booking, BookingStatus status) {
@@ -106,20 +49,6 @@ public class NotificationHelper {
         return message.toString();
     }
 
-    private int getNotificationPriority(BookingStatus status) {
-        switch (status) {
-            case CONFIRMED:
-            case IN_PROGRESS:
-                return NotificationCompat.PRIORITY_HIGH;
-            case COMPLETED:
-                return NotificationCompat.PRIORITY_DEFAULT;
-            case CANCELLED:
-                return NotificationCompat.PRIORITY_LOW;
-            default:
-                return NotificationCompat.PRIORITY_DEFAULT;
-        }
-    }
-
     /**
      * Send confirmation notification for reminder setup
      */
@@ -131,28 +60,24 @@ public class NotificationHelper {
     private void sendReminderSetNotification(BookingRequest booking, String reminderType) {
         String bookingId = "BK" + String.valueOf(booking.getTimestamp()).substring(8);
         String title = "⏰ Reminder Set";
-        String content = "Reminder set for booking #" + bookingId + ": " + reminderType;
+        String content = "Reminder set for booking #" + bookingId + ": " + reminderType + "\n" +
+                "Booking: " + booking.getSource() + " → " + booking.getDestination() + "\n" +
+                "Travel Date: " + booking.getFormattedTravelDate();
         
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setContentTitle(title)
-                .setContentText(content)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(
-                    "Booking: " + booking.getSource() + " → " + booking.getDestination() + "\n" +
-                    "Travel Date: " + booking.getFormattedTravelDate() + "\n" +
-                    "Reminder: " + reminderType
-                ))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true);
-
-        try {
-            notificationManager.notify(generateNotificationId(), builder.build());
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        }
+        scheduleNotification(title, content);
     }
 
-    private int generateNotificationId() {
-        return (int) System.currentTimeMillis();
+    private void scheduleNotification(String title, String message) {
+        Data data = new Data.Builder()
+                .putString(NotificationWorker.KEY_TITLE, title)
+                .putString(NotificationWorker.KEY_MESSAGE, message)
+                .build();
+
+        OneTimeWorkRequest notificationWork = new OneTimeWorkRequest.Builder(NotificationWorker.class)
+                .setInputData(data)
+                .build();
+
+        WorkManager.getInstance(context).enqueue(notificationWork);
     }
 }
+

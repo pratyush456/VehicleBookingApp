@@ -1,23 +1,51 @@
 package com.vehiclebooking;
 
-import java.text.SimpleDateFormat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.gson.annotations.SerializedName;
+
+import org.threeten.bp.LocalDate;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class BookingRequest {
-    private String source;
-    private String destination;
-    private Date travelDate;
-    private long timestamp;
+    @SerializedName("source")
+    @NonNull
+    private final String source;
+    
+    @SerializedName("destination")
+    @NonNull
+    private final String destination;
+    
+    @SerializedName("travel_date")
+    @NonNull
+    private final LocalDate travelDate;
+    
+    @SerializedName("timestamp")
+    private final long timestamp;
+    
+    @SerializedName("status")
+    @Nullable
     private BookingStatus status;
-    private List<StatusChange> statusHistory;
+    
+    @SerializedName("status_history")
+    @NonNull
+    private final List<StatusChange> statusHistory;
+    
+    @SerializedName("phone_number")
+    @Nullable
     private String phoneNumber;
+    
+    @SerializedName("vehicle_type")
+    @Nullable
     private String vehicleType;
+    
+    @SerializedName("booking_id")
+    @Nullable
     private String bookingId;
 
-    public BookingRequest(String source, String destination, Date travelDate) {
+    public BookingRequest(@NonNull String source, @NonNull String destination, @NonNull LocalDate travelDate) {
         this.source = source;
         this.destination = destination;
         this.travelDate = travelDate;
@@ -26,39 +54,55 @@ public class BookingRequest {
         this.statusHistory = new ArrayList<>();
         this.statusHistory.add(new StatusChange(BookingStatus.PENDING, System.currentTimeMillis(), "Booking request submitted"));
     }
+    
+    /**
+     * Create a copy of this booking with new source, destination, and travel date
+     * Preserves booking ID, phone number, vehicle type, status, and status history
+     */
+    @NonNull
+    public BookingRequest createModifiedCopy(@NonNull String newSource, @NonNull String newDestination, @NonNull LocalDate newTravelDate) {
+        BookingRequest copy = new BookingRequest(newSource, newDestination, newTravelDate);
+        // Copy mutable fields
+        copy.setBookingId(this.bookingId);
+        copy.setPhoneNumber(this.phoneNumber);
+        copy.setVehicleType(this.vehicleType);
+        // Copy status (if not null, restore it)
+        if (this.status != null) {
+            // Clear the initial PENDING status added in constructor
+            copy.statusHistory.clear();
+            // Copy all status history from original
+            copy.statusHistory.addAll(this.statusHistory);
+            // Restore status
+            copy.status = this.status;
+        }
+        return copy;
+    }
 
+    @NonNull
     public String getSource() {
         return source;
     }
 
-    public void setSource(String source) {
-        this.source = source;
-    }
-
+    @NonNull
     public String getDestination() {
         return destination;
     }
 
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-
-    public Date getTravelDate() {
+    @NonNull
+    public LocalDate getTravelDate() {
         return travelDate;
-    }
-
-    public void setTravelDate(Date travelDate) {
-        this.travelDate = travelDate;
     }
 
     public long getTimestamp() {
         return timestamp;
     }
 
+    @Nullable
     public BookingStatus getStatus() {
         return status;
     }
 
+    @NonNull
     public List<StatusChange> getStatusHistory() {
         return statusHistory;
     }
@@ -66,7 +110,7 @@ public class BookingRequest {
     /**
      * Change the booking status with validation
      */
-    public boolean changeStatus(BookingStatus newStatus, String reason) {
+    public boolean changeStatus(@NonNull BookingStatus newStatus, @NonNull String reason) {
         if (status == null) {
             status = BookingStatus.PENDING;
         }
@@ -100,32 +144,35 @@ public class BookingRequest {
         return status.getIcon() + " " + status.getDisplayName();
     }
 
+    @NonNull
     public String getFormattedTravelDate() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        return dateFormat.format(travelDate);
+        return DateUtils.formatDate(travelDate);
     }
 
+    @Nullable
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
+    public void setPhoneNumber(@Nullable String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
+    @Nullable
     public String getVehicleType() {
         return vehicleType;
     }
 
-    public void setVehicleType(String vehicleType) {
+    public void setVehicleType(@Nullable String vehicleType) {
         this.vehicleType = vehicleType;
     }
 
+    @Nullable
     public String getBookingId() {
         return bookingId;
     }
 
-    public void setBookingId(String bookingId) {
+    public void setBookingId(@Nullable String bookingId) {
         this.bookingId = bookingId;
     }
 
