@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jakewharton.threetenabp.AndroidThreeTen;
+import org.threeten.bp.LocalDate;
 
 public class BookingDetailsActivity extends AppCompatActivity {
     
@@ -115,7 +116,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         travelDateDetails.setText(formattedTravelDate);
         
         // Format booking time
-        String formattedBookingTime = DateUtils.formatDate(DateUtils.timestampToLocalDateTime(booking.getTimestamp()), "dd MMMM yyyy, hh:mm a");
+        String formattedBookingTime = DateUtils.formatDateTime12Hour(DateUtils.timestampToLocalDateTime(booking.getTimestamp()));
         bookingTimeDetails.setText(formattedBookingTime);
         
         // Setup status history
@@ -181,7 +182,10 @@ public class BookingDetailsActivity extends AppCompatActivity {
     
     private void setReminder() {
         // Calculate days until travel
-        long timeDiff = booking.getTravelDate().getTime() - System.currentTimeMillis();
+        LocalDate today = DateUtils.today();
+        long todayTimestamp = DateUtils.localDateToTimestamp(today);
+        long travelTimestamp = DateUtils.localDateToTimestamp(booking.getTravelDate());
+        long timeDiff = travelTimestamp - todayTimestamp;
         long daysUntilTravel = timeDiff / (24 * 60 * 60 * 1000);
         
         if (daysUntilTravel < 0) {

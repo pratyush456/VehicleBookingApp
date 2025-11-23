@@ -265,12 +265,11 @@ public class BookingActivity extends AppCompatActivity {
             binding.etPhoneNumber.getText().toString(), "Phone Number");
         String vehicleType = BookingStorage.trimAndValidate(
             binding.etVehicleType.getText().toString(), "Vehicle Type");
-        String selectedDate = binding.tvSelectedDate.getText().toString();
 
         // Validation using utility methods
         if (!BookingStorage.isFieldValid(source, "Source") || 
             !BookingStorage.isFieldValid(destination, "Destination") || 
-            selectedDate.equals("No date selected") ||
+            selectedDate == null ||
             !BookingStorage.isFieldValid(phoneNumber, "Phone Number") || 
             !BookingStorage.isFieldValid(vehicleType, "Vehicle Type")) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
@@ -279,7 +278,7 @@ public class BookingActivity extends AppCompatActivity {
         }
         
         // Validate date
-        if (!DateUtils.isDateValid(selectedDate)) {
+        if (selectedDate == null || !DateUtils.isDateValid(selectedDate)) {
             Toast.makeText(this, "Please select a valid date (not in the past)", Toast.LENGTH_SHORT).show();
             resetSubmissionState();
             return;

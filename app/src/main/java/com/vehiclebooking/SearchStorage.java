@@ -103,6 +103,36 @@ public class SearchStorage {
         SearchRecordDao dao = AppDatabase.getDatabase(context).searchRecordDao();
         dao.deleteAllSearchRecords();
     }
+    
+    // Alias for compatibility
+    public static void clearAllSearchRecords(Context context) {
+        clearAllRecords(context);
+    }
+    
+    // Get search records (alias for getAllSearchRecords)
+    public static List<VehicleSearchActivity.SearchRecord> getSearchRecords(Context context) {
+        return getAllSearchRecords(context);
+    }
+    
+    // Update search status
+    public static void updateSearchStatus(Context context, String phoneNumber, String timestamp, String newStatus) {
+        SearchRecordDao dao = AppDatabase.getDatabase(context).searchRecordDao();
+        SearchRecordEntity entity = dao.getSearchRecord(phoneNumber, timestamp);
+        if (entity != null) {
+            entity.status = newStatus;
+            dao.updateSearchRecord(entity);
+        }
+    }
+    
+    // Update admin notes
+    public static void updateAdminNotes(Context context, String phoneNumber, String timestamp, String notes) {
+        SearchRecordDao dao = AppDatabase.getDatabase(context).searchRecordDao();
+        SearchRecordEntity entity = dao.getSearchRecord(phoneNumber, timestamp);
+        if (entity != null) {
+            entity.adminNotes = notes;
+            dao.updateSearchRecord(entity);
+        }
+    }
 
     /**
      * Get search analytics data

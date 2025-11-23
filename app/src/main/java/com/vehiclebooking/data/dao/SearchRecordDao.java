@@ -14,6 +14,9 @@ public interface SearchRecordDao {
     @Query("SELECT * FROM search_records")
     List<SearchRecordEntity> getAllSearchRecords();
 
+    @Query("SELECT * FROM search_records WHERE phoneNumber = :phoneNumber AND timestamp = :timestamp LIMIT 1")
+    SearchRecordEntity getSearchRecord(String phoneNumber, String timestamp);
+
     @Query("SELECT * FROM search_records WHERE status = :status")
     List<SearchRecordEntity> getSearchRecordsByStatus(String status);
 

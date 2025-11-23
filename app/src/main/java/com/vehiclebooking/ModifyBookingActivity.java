@@ -153,11 +153,10 @@ public class ModifyBookingActivity extends AppCompatActivity {
         String source = sourceEditText.getText().toString().trim();
         String destination = destinationEditText.getText().toString().trim();
         String vehicleType = vehicleTypeEditText.getText().toString().trim();
-        String selectedDate = selectedDateText.getText().toString();
 
         // Validation
         if (source.isEmpty() || destination.isEmpty() || vehicleType.isEmpty() || 
-            selectedDate.equals("No date selected")) {
+            selectedDate == null) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
