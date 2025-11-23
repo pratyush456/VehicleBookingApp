@@ -12,10 +12,24 @@ RUN apt-get update \
     procps \
     libc6 \
     libstdc++6 \
+    lib32z1 \
+    libbz2-1.0 \
  && rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ENV PATH=$JAVA_HOME/bin:$PATH
+
+# Setup Android SDK
+ENV ANDROID_HOME=/opt/android-sdk
+ENV PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
+
+RUN mkdir -p $ANDROID_HOME/cmdline-tools \
+ && wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O android_tools.zip \
+ && unzip -q android_tools.zip -d $ANDROID_HOME/cmdline-tools \
+ && mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest \
+ && rm android_tools.zip \
+ && yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses \
+ && chown -R 1000:1000 $ANDROID_HOME
 
 ARG USERNAME=vscode
 ARG USER_UID=1000
