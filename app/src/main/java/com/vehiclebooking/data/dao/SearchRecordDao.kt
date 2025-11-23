@@ -62,4 +62,8 @@ interface SearchRecordDao {
     fun deleteAllSearchRecordsBlocking() = runBlocking {
         deleteAllSearchRecords()
     }
+    
+    fun deleteSearchRecordBlocking(phoneNumber: String, timestamp: String) = runBlocking {
+        deleteSearchRecord(phoneNumber, timestamp)
+    }
 }

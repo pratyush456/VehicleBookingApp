@@ -95,7 +95,7 @@ public class SearchStorage {
     // Delete a record
     public static void deleteSearchRecord(Context context, VehicleSearchActivity.SearchRecord record) {
         SearchRecordDao dao = AppDatabase.getDatabase(context).searchRecordDao();
-        dao.deleteSearchRecord(record.phoneNumber, record.timestamp);
+        dao.deleteSearchRecordBlocking(record.phoneNumber, record.timestamp);
     }
     
     // Clear all records (for testing/maintenance)
