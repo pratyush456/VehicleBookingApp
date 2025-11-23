@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Content Descriptions for Accessibility -->
+    
+    <!-- Navigation -->
+    <string name="cd_back_button">Navigate back</string>
+    <string name="cd_menu_button">Open menu</string>
+    <string name="cd_home_button">Go to home</string>
+    
+    <!-- Booking -->
+    <string name="cd_book_now_button">Book vehicle now</string>
+    <string name="cd_search_button">Search for vehicles</string>
+    <string name="cd_modify_booking_button">Modify booking</string>
+    <string name="cd_cancel_booking_button">Cancel booking</string>
+    <string name="cd_view_booking_details">View booking details</string>
+    
+    <!-- Vehicle -->
+    <string name="cd_vehicle_icon">Vehicle type icon</string>
+    <string name="cd_vehicle_image">Vehicle image</string>
+    <string name="cd_select_vehicle">Select vehicle type</string>
+    
+    <!-- User Profile -->
+    <string name="cd_profile_image">User profile picture</string>
+    <string name="cd_edit_profile">Edit profile</string>
+    <string name="cd_logout_button">Logout</string>
+    
+    <!-- Date and Time -->
+    <string name="cd_select_date">Select travel date</string>
+    <string name="cd_calendar_icon">Calendar</string>
+    <string name="cd_time_picker">Select time</string>
+    
+    <!-- Location -->
+    <string name="cd_location_icon">Location marker</string>
+    <string name="cd_source_location">Source location</string>
+    <string name="cd_destination_location">Destination location</string>
+    <string name="cd_current_location">Use current location</string>
+    
+    <!-- Status -->
+    <string name="cd_status_pending">Booking status: Pending</string>
+    <string name="cd_status_confirmed">Booking status: Confirmed</string>
+    <string name="cd_status_completed">Booking status: Completed</string>
+    <string name="cd_status_cancelled">Booking status: Cancelled</string>
+    
+    <!-- Forms -->
+    <string name="cd_phone_input">Phone number input field</string>
+    <string name="cd_email_input">Email address input field</string>
+    <string name="cd_password_input">Password input field</string>
+    <string name="cd_show_password">Show password</string>
+    <string name="cd_hide_password">Hide password</string>
+    
+    <!-- Actions -->
+    <string name="cd_submit">Submit</string>
+    <string name="cd_save">Save</string>
+    <string name="cd_delete">Delete</string>
+    <string name="cd_refresh">Refresh</string>
+    <string name="cd_filter">Filter results</string>
+    <string name="cd_sort">Sort items</string>
+    
+    <!-- Notifications -->
+    <string name="cd_notification_icon">Notification</string>
+    <string name="cd_close_notification">Close notification</string>
+    
+    <!-- Loading -->
+    <string name="cd_loading">Loading</string>
+    <string name="cd_progress_indicator">Progress indicator</string>
+    
+    <!-- Empty States -->
+    <string name="cd_no_bookings">No bookings available</string>
+    <string name="cd_no_results">No search results</string>
+    
+    <!-- Settings -->
+    <string name="cd_settings">Settings</string>
+    <string name="cd_theme_toggle">Toggle theme</string>
+    <string name="cd_notifications_toggle">Toggle notifications</string>
+</resources>
