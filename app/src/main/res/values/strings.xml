@@ -11,6 +11,6 @@
     <string name="booking_submitted">Your booking request has been submitted. You will be contacted soon.</string>
     <string name="fill_all_fields">Please fill all fields</string>
     <string name="invalid_date">Please select a valid date</string>
-    <string name="cd_username_input">Username input field</string>
+
     <string name="cd_register_button">Register new account</string>
 </resources>

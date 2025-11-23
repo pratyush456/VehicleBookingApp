@@ -45,7 +45,7 @@
     <string name="cd_phone_input">Phone number input field</string>
     <string name="cd_email_input">Email address input field</string>
     <string name="cd_password_input">Password input field</string>
-    <string name="cd_username_input">Username input field</string>
+
     <string name="cd_show_password">Show password</string>
     <string name="cd_hide_password">Hide password</string>
     
@@ -56,7 +56,7 @@
     <string name="cd_refresh">Refresh</string>
     <string name="cd_filter">Filter results</string>
     <string name="cd_sort">Sort items</string>
-    <string name="cd_register_button">Register new account</string>
+
     
     <!-- Notifications -->
     <string name="cd_notification_icon">Notification</string>
