@@ -54,6 +54,17 @@ public class BookingRequest {
         this.statusHistory = new ArrayList<>();
         this.statusHistory.add(new StatusChange(BookingStatus.PENDING, System.currentTimeMillis(), "Booking request submitted"));
     }
+
+    // Constructor for restoring from storage
+    public BookingRequest(@NonNull String source, @NonNull String destination, @NonNull LocalDate travelDate, 
+                          long timestamp, BookingStatus status, List<StatusChange> statusHistory) {
+        this.source = source;
+        this.destination = destination;
+        this.travelDate = travelDate;
+        this.timestamp = timestamp;
+        this.status = status;
+        this.statusHistory = statusHistory != null ? statusHistory : new ArrayList<>();
+    }
     
     /**
      * Create a copy of this booking with new source, destination, and travel date

@@ -11,24 +11,22 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.vehiclebooking.databinding.ActivityViewBookingsBinding;
 
 import java.util.List;
 
 public class ViewBookingsActivity extends AppCompatActivity implements BookingAdapter.OnStatusChangeClickListener {
 
-    private RecyclerView recyclerBookings;
-    private LinearLayout emptyStateLayout;
-    private TextView bookingCountText;
-    private Button makeFirstBookingButton;
+    private ActivityViewBookingsBinding binding;
     private BookingAdapter bookingAdapter;
     private List<BookingRequest> bookingList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_bookings);
+        binding = ActivityViewBookingsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        initializeViews();
         setupRecyclerView();
         loadBookings();
         setupClickListeners();
@@ -41,15 +39,8 @@ public class ViewBookingsActivity extends AppCompatActivity implements BookingAd
         loadBookings();
     }
 
-    private void initializeViews() {
-        recyclerBookings = findViewById(R.id.recycler_bookings);
-        emptyStateLayout = findViewById(R.id.layout_empty_state);
-        bookingCountText = findViewById(R.id.tv_booking_count);
-        makeFirstBookingButton = findViewById(R.id.btn_make_first_booking);
-    }
-
     private void setupRecyclerView() {
-        recyclerBookings.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerBookings.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void loadBookings() {
@@ -62,22 +53,22 @@ public class ViewBookingsActivity extends AppCompatActivity implements BookingAd
     private void updateUI() {
         if (bookingList.isEmpty()) {
             // Show empty state
-            emptyStateLayout.setVisibility(View.VISIBLE);
-            recyclerBookings.setVisibility(View.GONE);
-            bookingCountText.setText("0 bookings");
+            binding.layoutEmptyState.setVisibility(View.VISIBLE);
+            binding.recyclerBookings.setVisibility(View.GONE);
+            binding.tvBookingCount.setText("0 bookings");
         } else {
             // Show bookings list
-            emptyStateLayout.setVisibility(View.GONE);
-            recyclerBookings.setVisibility(View.VISIBLE);
+            binding.layoutEmptyState.setVisibility(View.GONE);
+            binding.recyclerBookings.setVisibility(View.VISIBLE);
             
             // Update booking count
             int count = bookingList.size();
-            bookingCountText.setText(count + (count == 1 ? " booking" : " bookings"));
+            binding.tvBookingCount.setText(count + (count == 1 ? " booking" : " bookings"));
             
             // Setup or update adapter
             if (bookingAdapter == null) {
                 bookingAdapter = new BookingAdapter(bookingList, this);
-                recyclerBookings.setAdapter(bookingAdapter);
+                binding.recyclerBookings.setAdapter(bookingAdapter);
             } else {
                 bookingAdapter.updateBookings(bookingList);
             }
@@ -85,7 +76,7 @@ public class ViewBookingsActivity extends AppCompatActivity implements BookingAd
     }
 
     private void setupClickListeners() {
-        makeFirstBookingButton.setOnClickListener(new View.OnClickListener() {
+        binding.btnMakeFirstBooking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Navigate to booking activity

@@ -8,13 +8,11 @@ import android.widget.Button;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.jakewharton.threetenabp.AndroidThreeTen;
+import com.vehiclebooking.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    private Button btnBookVehicle;
-    private Button btnViewMyBookings;
-    private Button btnAnalytics;
-    private Button btnUnifiedAdmin;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,12 +25,12 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "MainActivity started");
             
             // Set content view first to prevent layout issues
-            setContentView(R.layout.activity_main);
+            binding = ActivityMainBinding.inflate(getLayoutInflater());
+            setContentView(binding.getRoot());
             
             Log.d(TAG, "Content view set successfully");
             
             // Initialize views and setup click listeners
-            initializeViews();
             setupClickListeners();
             
         } catch (Exception e) {
@@ -43,15 +41,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     
-    private void initializeViews() {
-        btnBookVehicle = findViewById(R.id.btn_book_vehicle);
-        btnViewMyBookings = findViewById(R.id.btn_view_my_bookings);
-        btnAnalytics = findViewById(R.id.btn_analytics);
-        btnUnifiedAdmin = findViewById(R.id.btn_unified_admin);
-    }
-    
     private void setupClickListeners() {
-        btnBookVehicle.setOnClickListener(new View.OnClickListener() {
+        binding.btnBookVehicle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Check if user is logged in, if not redirect to login
@@ -65,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         
-        btnViewMyBookings.setOnClickListener(new View.OnClickListener() {
+        binding.btnViewMyBookings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Check if user is logged in, if not redirect to login
@@ -79,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         
-        btnAnalytics.setOnClickListener(new View.OnClickListener() {
+        binding.btnAnalytics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Check if user is logged in, if not redirect to login
@@ -93,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         
-        btnUnifiedAdmin.setOnClickListener(new View.OnClickListener() {
+        binding.btnUnifiedAdmin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Check if user is logged in and is admin

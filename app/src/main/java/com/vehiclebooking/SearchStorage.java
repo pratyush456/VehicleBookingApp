@@ -1,11 +1,14 @@
 package com.vehiclebooking;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.lang.reflect.Type;
+
+import com.vehiclebooking.data.AppDatabase;
+import com.vehiclebooking.data.dao.SearchRecordDao;
+import com.vehiclebooking.data.model.SearchRecordEntity;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class SearchStorage {
@@ -55,97 +58,68 @@ public class SearchStorage {
                 break;
             }
         }
-    }
-
-    /**
-     * Update admin notes for a search record
-     */
-    public static void updateAdminNotes(Context context, String phoneNumber, String timestamp, String notes) {
-        List<VehicleSearchActivity.SearchRecord> records = getSearchRecords(context);
-        
-        for (VehicleSearchActivity.SearchRecord record : records) {
-            if (record.phoneNumber.equals(phoneNumber) && record.timestamp.equals(timestamp)) {
-                record.adminNotes = notes;
-                saveSearchRecords(context, records);
-                break;
-            }
-        }
-    }
-
-    /**
-     * Update status for a search record
-     */
-    public static void updateSearchStatus(Context context, String phoneNumber, String timestamp, String status) {
-        List<VehicleSearchActivity.SearchRecord> records = getSearchRecords(context);
-        
-        for (VehicleSearchActivity.SearchRecord record : records) {
-            if (record.phoneNumber.equals(phoneNumber) && record.timestamp.equals(timestamp)) {
-                record.status = status;
-                saveSearchRecords(context, records);
-                break;
-            }
-        }
-    }
-
-    /**
-     * Get all search records
-     */
-    public static List<VehicleSearchActivity.SearchRecord> getSearchRecords(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        String recordsJson = prefs.getString(SEARCH_RECORDS_KEY, "[]");
-        
-        Type listType = new TypeToken<List<VehicleSearchActivity.SearchRecord>>(){}.getType();
-        List<VehicleSearchActivity.SearchRecord> records = gson.fromJson(recordsJson, listType);
-        
-        return records != null ? records : new ArrayList<>();
-    }
-
-    /**
-     * Get search records filtered by status
-     */
-    public static List<VehicleSearchActivity.SearchRecord> getSearchRecordsByStatus(Context context, String status) {
-        List<VehicleSearchActivity.SearchRecord> allRecords = getSearchRecords(context);
-        List<VehicleSearchActivity.SearchRecord> filteredRecords = new ArrayList<>();
-        
-        for (VehicleSearchActivity.SearchRecord record : allRecords) {
-            if (record.status.equals(status)) {
-                filteredRecords.add(record);
-            }
-        }
-        
-        return filteredRecords;
-    }
-
-    /**
-     * Get recent search records (last 30 days)
-     */
-    public static List<VehicleSearchActivity.SearchRecord> getRecentSearchRecords(Context context) {
-        List<VehicleSearchActivity.SearchRecord> allRecords = getSearchRecords(context);
-        List<VehicleSearchActivity.SearchRecord> recentRecords = new ArrayList<>();
-        
-        long thirtyDaysAgo = System.currentTimeMillis() - (30L * 24L * 60L * 60L * 1000L);
-        
-        for (VehicleSearchActivity.SearchRecord record : allRecords) {
-            try {
-                // Parse timestamp and check if it's within 30 days
-                // This is a simple check - in production you'd use proper date parsing
-                if (record.timestamp.length() >= 10) {
-                    recentRecords.add(record);
+                if (mostRecent == null || record.timestamp.compareTo(mostRecent.timestamp) > 0) {
+                    mostRecent = record;
                 }
-            } catch (Exception e) {
-                // If parsing fails, include the record anyway
-                recentRecords.add(record);
             }
         }
         
-        return recentRecords;
+        if (mostRecent != null) {
+            mostRecent.vehicleInterest = vehicleInterest;
+            dao.updateSearchRecord(mostRecent);
+        }
+    }
+    
+    // Get all search records (for admin dashboard)
+    public static List<VehicleSearchActivity.SearchRecord> getAllSearchRecords(Context context) {
+        SearchRecordDao dao = AppDatabase.getDatabase(context).searchRecordDao();
+        List<SearchRecordEntity> entities = dao.getAllSearchRecords();
+        
+        List<VehicleSearchActivity.SearchRecord> records = new ArrayList<>();
+        for (SearchRecordEntity entity : entities) {
+            records.add(entity.toSearchRecord());
+        }
+        
+        // Sort by timestamp descending (newest first)
+        Collections.sort(records, new Comparator<VehicleSearchActivity.SearchRecord>() {
+            @Override
+            public int compare(VehicleSearchActivity.SearchRecord r1, VehicleSearchActivity.SearchRecord r2) {
+                return r2.timestamp.compareTo(r1.timestamp);
+            }
+        });
+        
+        return records;
+    }
+    
+    // Get records by status
+    public static List<VehicleSearchActivity.SearchRecord> getSearchRecordsByStatus(Context context, String status) {
+        SearchRecordDao dao = AppDatabase.getDatabase(context).searchRecordDao();
+        List<SearchRecordEntity> entities = dao.getSearchRecordsByStatus(status);
+        
+        List<VehicleSearchActivity.SearchRecord> records = new ArrayList<>();
+        for (SearchRecordEntity entity : entities) {
+            records.add(entity.toSearchRecord());
+        }
+        return records;
+    }
+    
+    // Delete a record
+    public static void deleteSearchRecord(Context context, VehicleSearchActivity.SearchRecord record) {
+        SearchRecordDao dao = AppDatabase.getDatabase(context).searchRecordDao();
+        dao.deleteSearchRecord(record.phoneNumber, record.timestamp);
+    }
+    
+    // Clear all records (for testing/maintenance)
+    public static void clearAllRecords(Context context) {
+        SearchRecordDao dao = AppDatabase.getDatabase(context).searchRecordDao();
+        dao.deleteAllSearchRecords();
     }
 
     /**
      * Get search analytics data
      */
     public static SearchAnalytics getSearchAnalytics(Context context) {
-        List<VehicleSearchActivity.SearchRecord> records = getSearchRecords(context);
+        List<VehicleSearchActivity.SearchRecord> records = getAllSearchRecords(context);
         SearchAnalytics analytics = new SearchAnalytics();
         
         analytics.totalSearches = records.size();

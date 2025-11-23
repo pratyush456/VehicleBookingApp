@@ -13,45 +13,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import com.vehiclebooking.databinding.ActivityRegisterBinding;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText fullNameEditText;
-    private EditText usernameEditText;
-    private EditText emailEditText;
-    private EditText phoneNumberEditText;
-    private EditText passwordEditText;
-    private EditText confirmPasswordEditText;
-    private Spinner roleSpinner;
-    private EditText licenseNumberEditText;
-    private EditText vehicleDetailsEditText;
-    private Button registerButton;
-    private TextView loginLink;
+    private ActivityRegisterBinding binding;
     private UserManager userManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        binding = ActivityRegisterBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         userManager = UserManager.getInstance(this);
-        initializeViews();
         setupRoleSpinner();
         setupClickListeners();
-    }
-
-    private void initializeViews() {
-        fullNameEditText = findViewById(R.id.et_full_name);
-        usernameEditText = findViewById(R.id.et_username);
-        emailEditText = findViewById(R.id.et_email);
-        phoneNumberEditText = findViewById(R.id.et_phone_number);
-        passwordEditText = findViewById(R.id.et_password);
-        confirmPasswordEditText = findViewById(R.id.et_confirm_password);
-        roleSpinner = findViewById(R.id.spinner_role);
-        licenseNumberEditText = findViewById(R.id.et_license_number);
-        vehicleDetailsEditText = findViewById(R.id.et_vehicle_details);
-        registerButton = findViewById(R.id.btn_register);
-        loginLink = findViewById(R.id.tv_login_link);
     }
 
     private void setupRoleSpinner() {
@@ -59,16 +36,16 @@ public class RegisterActivity extends AppCompatActivity {
         UserRole[] roles = {UserRole.PASSENGER, UserRole.DRIVER};
         ArrayAdapter<UserRole> adapter = new ArrayAdapter<>(this, 
             android.R.layout.simple_spinner_dropdown_item, roles);
-        roleSpinner.setAdapter(adapter);
+        binding.spinnerRole.setAdapter(adapter);
         
         // Show/hide driver fields based on role selection
-        roleSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+        binding.spinnerRole.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(android.widget.AdapterView<?> parent, android.view.View view, int position, long id) {
                 UserRole selectedRole = (UserRole) parent.getSelectedItem();
                 boolean isDriver = selectedRole == UserRole.DRIVER;
-                licenseNumberEditText.setVisibility(isDriver ? View.VISIBLE : View.GONE);
-                vehicleDetailsEditText.setVisibility(isDriver ? View.VISIBLE : View.GONE);
+                binding.etLicenseNumber.setVisibility(isDriver ? View.VISIBLE : View.GONE);
+                binding.etVehicleDetails.setVisibility(isDriver ? View.VISIBLE : View.GONE);
             }
 
             @Override
@@ -77,14 +54,14 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        registerButton.setOnClickListener(new View.OnClickListener() {
+        binding.btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 handleRegistration();
             }
         });
 
-        loginLink.setOnClickListener(new View.OnClickListener() {
+        binding.tvLoginLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish(); // Go back to login
@@ -95,81 +72,81 @@ public class RegisterActivity extends AppCompatActivity {
     private void handleRegistration() {
         // Trim all inputs using utility methods
         String fullName = BookingStorage.trimAndValidate(
-            fullNameEditText.getText().toString(), "Full Name");
+            binding.etFullName.getText().toString(), "Full Name");
         String username = BookingStorage.trimAndValidate(
-            usernameEditText.getText().toString(), "Username");
+            binding.etUsername.getText().toString(), "Username");
         String email = BookingStorage.trimAndValidate(
-            emailEditText.getText().toString(), "Email");
+            binding.etEmail.getText().toString(), "Email");
         String phoneNumber = BookingStorage.trimAndValidate(
-            phoneNumberEditText.getText().toString(), "Phone Number");
+            binding.etPhoneNumber.getText().toString(), "Phone Number");
         String password = BookingStorage.trimAndValidate(
-            passwordEditText.getText().toString(), "Password");
+            binding.etPassword.getText().toString(), "Password");
         String confirmPassword = BookingStorage.trimAndValidate(
-            confirmPasswordEditText.getText().toString(), "Confirm Password");
-        UserRole selectedRole = (UserRole) roleSpinner.getSelectedItem();
+            binding.etConfirmPassword.getText().toString(), "Confirm Password");
+        UserRole selectedRole = (UserRole) binding.spinnerRole.getSelectedItem();
 
         // Validation using utility methods
         if (!BookingStorage.isFieldValid(fullName, "Full Name")) {
-            fullNameEditText.setError("Full name is required");
+            binding.etFullName.setError("Full name is required");
             return;
         }
 
         if (!BookingStorage.isFieldValid(username, "Username")) {
-            usernameEditText.setError("Username is required");
+            binding.etUsername.setError("Username is required");
             return;
         }
 
         if (!BookingStorage.isFieldValid(email, "Email")) {
-            emailEditText.setError("Email is required");
+            binding.etEmail.setError("Email is required");
             return;
         }
         
         // Validate email format
         if (!BookingStorage.isValidEmail(email)) {
-            emailEditText.setError("Please enter a valid email address");
+            binding.etEmail.setError("Please enter a valid email address");
             return;
         }
 
         if (!BookingStorage.isFieldValid(phoneNumber, "Phone Number")) {
-            phoneNumberEditText.setError("Phone number is required");
+            binding.etPhoneNumber.setError("Phone number is required");
             return;
         }
         
         // Validate phone number format
         if (!BookingStorage.isValidPhoneNumber(phoneNumber)) {
-            phoneNumberEditText.setError("Please enter a valid phone number");
+            binding.etPhoneNumber.setError("Please enter a valid phone number");
             return;
         }
 
         if (!BookingStorage.isFieldValid(password, "Password")) {
-            passwordEditText.setError("Password is required");
+            binding.etPassword.setError("Password is required");
             return;
         }
 
         if (password.length() < 6) {
-            passwordEditText.setError("Password must be at least 6 characters");
+            binding.etPassword.setError("Password must be at least 6 characters");
             return;
         }
 
         if (!password.equals(confirmPassword)) {
-            confirmPasswordEditText.setError("Passwords do not match");
+            binding.etConfirmPassword.setError("Passwords do not match");
             return;
         }
 
         // Driver-specific validation
         if (selectedRole == UserRole.DRIVER) {
             String licenseNumber = BookingStorage.trimAndValidate(
-                licenseNumberEditText.getText().toString(), "License Number");
+                binding.etLicenseNumber.getText().toString(), "License Number");
             String vehicleDetails = BookingStorage.trimAndValidate(
-                vehicleDetailsEditText.getText().toString(), "Vehicle Details");
+                binding.etVehicleDetails.getText().toString(), "Vehicle Details");
 
             if (!BookingStorage.isFieldValid(licenseNumber, "License Number")) {
-                licenseNumberEditText.setError("License number is required for drivers");
+                binding.etLicenseNumber.setError("License number is required for drivers");
                 return;
             }
 
             if (!BookingStorage.isFieldValid(vehicleDetails, "Vehicle Details")) {
-                vehicleDetailsEditText.setError("Vehicle details are required for drivers");
+                binding.etVehicleDetails.setError("Vehicle details are required for drivers");
                 return;
             }
         }

@@ -32,6 +32,10 @@ android {
         abortOnError false
         checkReleaseBuilds false
     }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -60,6 +64,13 @@ dependencies {
     
     // WorkManager
     implementation 'androidx.work:work-runtime:2.8.1'
+
+    // Room components
+    implementation "androidx.room:room-runtime:2.6.1"
+    annotationProcessor "androidx.room:room-compiler:2.6.1"
+
+    // DataStore Preferences
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 }
 
 // Fix Kotlin dependency conflicts

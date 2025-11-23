@@ -1,23 +1,21 @@
 package com.vehiclebooking;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import com.google.gson.GsonBuilder;
+import com.vehiclebooking.data.AppDatabase;
+import com.vehiclebooking.data.dao.BookingDao;
+import com.vehiclebooking.data.model.BookingEntity;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.threeten.bp.LocalDate;
 
+import org.threeten.bp.LocalDate;
+
 public class BookingStorage {
-    private static final String PREFERENCES_NAME = "vehicle_bookings";
-    private static final String BOOKINGS_KEY = "bookings_list";
     
     private Context context;
     
@@ -32,113 +30,59 @@ public class BookingStorage {
     }
 
     public static void saveBooking(@NonNull Context context, @NonNull BookingRequest booking) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
-        Gson gson = createGson();
-        
-        // Get existing bookings
-        List<BookingRequest> bookings = getAllBookings(context);
+        BookingDao bookingDao = AppDatabase.getDatabase(context).bookingDao();
         
         // Check for duplicate booking ID to prevent duplicates
         if (booking.getBookingId() != null) {
-            for (BookingRequest existingBooking : bookings) {
-                if (booking.getBookingId().equals(existingBooking.getBookingId())) {
-                    // Duplicate booking ID found, don't save
-                    return;
-                }
+            BookingEntity existing = bookingDao.getBookingById(booking.getBookingId());
+            if (existing != null) {
+                // Duplicate booking ID found, don't save
+                return;
             }
         }
         
         // Add new booking
-        bookings.add(booking);
-        
-        // Save back to preferences
-        String bookingsJson = gson.toJson(bookings);
-        prefs.edit().putString(BOOKINGS_KEY, bookingsJson).apply();
+        bookingDao.insertBooking(new BookingEntity(booking));
     }
 
     @NonNull
     public static List<BookingRequest> getAllBookings(@NonNull Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
-        String bookingsJson = prefs.getString(BOOKINGS_KEY, "[]");
+        BookingDao bookingDao = AppDatabase.getDatabase(context).bookingDao();
+        List<BookingEntity> entities = bookingDao.getAllBookings();
         
-        Gson gson = createGson();
-        Type listType = new TypeToken<List<BookingRequest>>(){}.getType();
-        
-        List<BookingRequest> bookings = gson.fromJson(bookingsJson, listType);
-        return bookings != null ? bookings : new ArrayList<>();
+        List<BookingRequest> bookings = new ArrayList<>();
+        for (BookingEntity entity : entities) {
+            bookings.add(entity.toBookingRequest());
+        }
+        return bookings;
     }
 
     public static void clearAllBookings(@NonNull Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
-        prefs.edit().remove(BOOKINGS_KEY).apply();
+        BookingDao bookingDao = AppDatabase.getDatabase(context).bookingDao();
+        bookingDao.deleteAllBookings();
     }
 
     /**
      * Update an existing booking (useful for status changes and modifications)
      */
     public static void updateBooking(@NonNull Context context, @NonNull BookingRequest updatedBooking) {
-        List<BookingRequest> bookings = getAllBookings(context);
-        
-        // Find and update the booking by booking ID (preferred) or timestamp
-        boolean found = false;
-        for (int i = 0; i < bookings.size(); i++) {
-            BookingRequest existing = bookings.get(i);
-            // Try booking ID first (more reliable)
-            if (updatedBooking.getBookingId() != null && existing.getBookingId() != null &&
-                updatedBooking.getBookingId().equals(existing.getBookingId())) {
-                bookings.set(i, updatedBooking);
-                found = true;
-                break;
-            }
-            // Fallback to timestamp if booking ID not available
-            if (!found && existing.getTimestamp() == updatedBooking.getTimestamp()) {
-                bookings.set(i, updatedBooking);
-                found = true;
-                break;
-            }
-        }
-        
-        // If not found, add as new booking
-        if (!found) {
-            bookings.add(updatedBooking);
-        }
-        
-        // Save updated list
-        SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
-        Gson gson = createGson();
-        String bookingsJson = gson.toJson(bookings);
-        prefs.edit().putString(BOOKINGS_KEY, bookingsJson).apply();
+        BookingDao bookingDao = AppDatabase.getDatabase(context).bookingDao();
+        bookingDao.updateBooking(new BookingEntity(updatedBooking));
     }
     
-    /**
-     * Create Gson instance with LocalDate adapter for efficient serialization
-     */
-    @NonNull
-    private static Gson createGson() {
-        return new GsonBuilder()
-            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
-            .create();
-    }
-
     /**
      * Get bookings filtered by status
      */
     @NonNull
     public static List<BookingRequest> getBookingsByStatus(@NonNull Context context, @NonNull BookingStatus status) {
-        List<BookingRequest> allBookings = getAllBookings(context);
-        List<BookingRequest> filteredBookings = new ArrayList<>();
+        BookingDao bookingDao = AppDatabase.getDatabase(context).bookingDao();
+        List<BookingEntity> entities = bookingDao.getBookingsByStatus(status);
         
-        for (BookingRequest booking : allBookings) {
-            BookingStatus bookingStatus = booking.getStatus();
-            if (bookingStatus == null) {
-                bookingStatus = BookingStatus.PENDING; // Default fallback
-            }
-            if (bookingStatus == status) {
-                filteredBookings.add(booking);
-            }
+        List<BookingRequest> bookings = new ArrayList<>();
+        for (BookingEntity entity : entities) {
+            bookings.add(entity.toBookingRequest());
         }
-        
-        return filteredBookings;
+        return bookings;
     }
 
     /**
@@ -170,13 +114,12 @@ public class BookingStorage {
         String bookingId = "BK" + timestamp + randomComponent;
         
         // Ensure this ID doesn't already exist
-        List<BookingRequest> existingBookings = getAllBookings(context);
-        for (BookingRequest existing : existingBookings) {
-            if (bookingId.equals(existing.getBookingId())) {
-                // Very rare collision, generate new ID
-                bookingId = "BK" + System.currentTimeMillis() + (int)(Math.random() * 10000);
-                break;
-            }
+        BookingDao bookingDao = AppDatabase.getDatabase(context).bookingDao();
+        BookingEntity existing = bookingDao.getBookingById(bookingId);
+        
+        if (existing != null) {
+            // Very rare collision, generate new ID
+            bookingId = "BK" + System.currentTimeMillis() + (int)(Math.random() * 10000);
         }
         
         return bookingId;

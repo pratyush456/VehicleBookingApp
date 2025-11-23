@@ -3,15 +3,16 @@ package com.vehiclebooking;
 import android.content.Context;
 import android.content.SharedPreferences;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.vehiclebooking.data.AppDatabase;
+import com.vehiclebooking.data.dao.UserDao;
+import com.vehiclebooking.data.model.UserEntity;
+import com.vehiclebooking.utils.GsonProvider;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserManager {
     private static final String PREFERENCES_NAME = "vehicle_booking_users";
-    private static final String USERS_KEY = "users_list";
     private static final String CURRENT_USER_KEY = "current_user";
     private static final String IS_LOGGED_IN_KEY = "is_logged_in";
     
@@ -33,7 +34,8 @@ public class UserManager {
     
     // Initialize with default admin user if no users exist
     public void initializeDefaultUsers() {
-        List<User> users = getAllUsers();
+        UserDao userDao = AppDatabase.getDatabase(context).userDao();
+        List<UserEntity> users = userDao.getAllUsers();
         if (users.isEmpty()) {
             // Create default admin user
             User admin = new User("admin", "admin@vehiclebooking.com", "1234567890", 
@@ -61,16 +63,16 @@ public class UserManager {
     
     // User Login
     public boolean login(String username, String password) {
-        List<User> users = getAllUsers();
-        for (User user : users) {
-            if (user.getUsername().equals(username) && 
-                user.getPassword().equals(password) && 
-                user.isActive()) {
-                
-                currentUser = user;
-                saveCurrentUserSession();
-                return true;
-            }
+        UserDao userDao = AppDatabase.getDatabase(context).userDao();
+        UserEntity userEntity = userDao.getUserByUsername(username);
+        
+        if (userEntity != null && 
+            userEntity.password.equals(password) && 
+            userEntity.isActive) {
+            
+            currentUser = userEntity.toUser();
+            saveCurrentUserSession();
+            return true;
         }
         return false;
     }
@@ -95,9 +97,8 @@ public class UserManager {
     // Save user to storage
     private boolean saveUser(User user) {
         try {
-            List<User> users = getAllUsers();
-            users.add(user);
-            saveAllUsers(users);
+            UserDao userDao = AppDatabase.getDatabase(context).userDao();
+            userDao.insertUser(new UserEntity(user));
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,50 +108,31 @@ public class UserManager {
     
     // Get all users
     private List<User> getAllUsers() {
-        SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
-        String usersJson = prefs.getString(USERS_KEY, "[]");
-        
-        Gson gson = new Gson();
-        Type listType = new TypeToken<List<User>>(){}.getType();
-        
-        List<User> users = gson.fromJson(usersJson, listType);
-        return users != null ? users : new ArrayList<>();
-    }
-    
-    // Save all users
-    private void saveAllUsers(List<User> users) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
-        Gson gson = new Gson();
-        String usersJson = gson.toJson(users);
-        prefs.edit().putString(USERS_KEY, usersJson).apply();
+        UserDao userDao = AppDatabase.getDatabase(context).userDao();
+        List<UserEntity> entities = userDao.getAllUsers();
+        List<User> users = new ArrayList<>();
+        for (UserEntity entity : entities) {
+            users.add(entity.toUser());
+        }
+        return users;
     }
     
     // Check if username exists
     private boolean isUsernameExists(String username) {
-        List<User> users = getAllUsers();
-        for (User user : users) {
-            if (user.getUsername().equals(username)) {
-                return true;
-            }
-        }
-        return false;
+        UserDao userDao = AppDatabase.getDatabase(context).userDao();
+        return userDao.getUserByUsername(username) != null;
     }
     
     // Check if email exists
     private boolean isEmailExists(String email) {
-        List<User> users = getAllUsers();
-        for (User user : users) {
-            if (user.getEmail().equals(email)) {
-                return true;
-            }
-        }
-        return false;
+        UserDao userDao = AppDatabase.getDatabase(context).userDao();
+        return userDao.getUserByEmail(email) != null;
     }
     
     // Save current user session
     private void saveCurrentUserSession() {
         SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
-        Gson gson = new Gson();
+        Gson gson = GsonProvider.getGson();
         String userJson = gson.toJson(currentUser);
         prefs.edit()
                 .putString(CURRENT_USER_KEY, userJson)
@@ -164,7 +146,7 @@ public class UserManager {
         if (prefs.getBoolean(IS_LOGGED_IN_KEY, false)) {
             String userJson = prefs.getString(CURRENT_USER_KEY, "");
             if (!userJson.isEmpty()) {
-                Gson gson = new Gson();
+                Gson gson = GsonProvider.getGson();
                 currentUser = gson.fromJson(userJson, User.class);
             }
         }
@@ -181,30 +163,29 @@ public class UserManager {
     
     // Get users by role (for admin to manage)
     public List<User> getUsersByRole(UserRole role) {
-        List<User> allUsers = getAllUsers();
-        List<User> filteredUsers = new ArrayList<>();
-        for (User user : allUsers) {
-            if (user.getRole() == role) {
-                filteredUsers.add(user);
-            }
+        UserDao userDao = AppDatabase.getDatabase(context).userDao();
+        List<UserEntity> entities = userDao.getUsersByRole(role);
+        List<User> users = new ArrayList<>();
+        for (UserEntity entity : entities) {
+            users.add(entity.toUser());
         }
-        return filteredUsers;
+        return users;
     }
     
     // Update user (for profile updates)
     public boolean updateUser(User updatedUser) {
-        List<User> users = getAllUsers();
-        for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getUserId().equals(updatedUser.getUserId())) {
-                users.set(i, updatedUser);
-                saveAllUsers(users);
-                if (currentUser != null && currentUser.getUserId().equals(updatedUser.getUserId())) {
-                    currentUser = updatedUser;
-                    saveCurrentUserSession();
-                }
-                return true;
+        try {
+            UserDao userDao = AppDatabase.getDatabase(context).userDao();
+            userDao.updateUser(new UserEntity(updatedUser));
+            
+            if (currentUser != null && currentUser.getUserId().equals(updatedUser.getUserId())) {
+                currentUser = updatedUser;
+                saveCurrentUserSession();
             }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 }

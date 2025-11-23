@@ -18,18 +18,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.jakewharton.threetenabp.AndroidThreeTen;
+import com.vehiclebooking.databinding.ActivityBookingBinding;
 
 import org.threeten.bp.LocalDate;
 
 public class BookingActivity extends AppCompatActivity {
 
-    private EditText sourceEditText;
-    private EditText destinationEditText;
-    private TextView selectedDateText;
-    private Button selectDateButton;
-    private Button bookNowButton;
-    private EditText phoneNumberEditText;
-    private EditText vehicleTypeEditText;
+    private ActivityBookingBinding binding;
     
     private LocalDate selectedDate;
     private NotificationHelper notificationHelper;
@@ -44,9 +39,9 @@ public class BookingActivity extends AppCompatActivity {
         // Initialize ThreeTenABP for java.time backport (API < 26)
         AndroidThreeTen.init(this);
         
-        setContentView(R.layout.activity_booking);
+        binding = ActivityBookingBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        initializeViews();
         setupClickListeners();
         selectedDate = DateUtils.today();
         notificationHelper = new NotificationHelper(this);
@@ -108,25 +103,15 @@ public class BookingActivity extends AppCompatActivity {
         }
     }
 
-    private void initializeViews() {
-        sourceEditText = findViewById(R.id.et_source);
-        destinationEditText = findViewById(R.id.et_destination);
-        selectedDateText = findViewById(R.id.tv_selected_date);
-        selectDateButton = findViewById(R.id.btn_select_date);
-        bookNowButton = findViewById(R.id.btn_book_now);
-        phoneNumberEditText = findViewById(R.id.et_phone_number);
-        vehicleTypeEditText = findViewById(R.id.et_vehicle_type);
-    }
-
     private void setupClickListeners() {
-        selectDateButton.setOnClickListener(new View.OnClickListener() {
+        binding.btnSelectDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDatePicker();
             }
         });
 
-        bookNowButton.setOnClickListener(new View.OnClickListener() {
+        binding.btnBookNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 handleBookingSubmission();
@@ -139,7 +124,7 @@ public class BookingActivity extends AppCompatActivity {
     
     private void setupTextWatchers() {
         // Source validation
-        sourceEditText.addTextChangedListener(new TextWatcher() {
+        binding.etSource.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             
@@ -153,7 +138,7 @@ public class BookingActivity extends AppCompatActivity {
         });
         
         // Destination validation
-        destinationEditText.addTextChangedListener(new TextWatcher() {
+        binding.etDestination.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             
@@ -167,7 +152,7 @@ public class BookingActivity extends AppCompatActivity {
         });
         
         // Phone number validation
-        phoneNumberEditText.addTextChangedListener(new TextWatcher() {
+        binding.etPhoneNumber.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             
@@ -181,7 +166,7 @@ public class BookingActivity extends AppCompatActivity {
         });
         
         // Vehicle type validation
-        vehicleTypeEditText.addTextChangedListener(new TextWatcher() {
+        binding.etVehicleType.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             
@@ -196,40 +181,40 @@ public class BookingActivity extends AppCompatActivity {
     }
     
     private void validateSourceField() {
-        String source = sourceEditText.getText().toString().trim();
+        String source = binding.etSource.getText().toString().trim();
         if (source.isEmpty()) {
-            sourceEditText.setError("Source location is required");
+            binding.etSource.setError("Source location is required");
         } else {
-            sourceEditText.setError(null);
+            binding.etSource.setError(null);
         }
     }
     
     private void validateDestinationField() {
-        String destination = destinationEditText.getText().toString().trim();
+        String destination = binding.etDestination.getText().toString().trim();
         if (destination.isEmpty()) {
-            destinationEditText.setError("Destination location is required");
+            binding.etDestination.setError("Destination location is required");
         } else {
-            destinationEditText.setError(null);
+            binding.etDestination.setError(null);
         }
     }
     
     private void validatePhoneField() {
-        String phone = phoneNumberEditText.getText().toString().trim();
+        String phone = binding.etPhoneNumber.getText().toString().trim();
         if (phone.isEmpty()) {
-            phoneNumberEditText.setError("Phone number is required");
+            binding.etPhoneNumber.setError("Phone number is required");
         } else if (!BookingStorage.isValidPhoneNumber(phone)) {
-            phoneNumberEditText.setError("Please enter a valid phone number");
+            binding.etPhoneNumber.setError("Please enter a valid phone number");
         } else {
-            phoneNumberEditText.setError(null);
+            binding.etPhoneNumber.setError(null);
         }
     }
     
     private void validateVehicleTypeField() {
-        String vehicleType = vehicleTypeEditText.getText().toString().trim();
+        String vehicleType = binding.etVehicleType.getText().toString().trim();
         if (vehicleType.isEmpty()) {
-            vehicleTypeEditText.setError("Vehicle type is required");
+            binding.etVehicleType.setError("Vehicle type is required");
         } else {
-            vehicleTypeEditText.setError(null);
+            binding.etVehicleType.setError(null);
         }
     }
 
@@ -258,7 +243,7 @@ public class BookingActivity extends AppCompatActivity {
 
     private void updateSelectedDateDisplay() {
         String formattedDate = DateUtils.formatDate(selectedDate);
-        selectedDateText.setText("Selected Date: " + formattedDate);
+        binding.tvSelectedDate.setText("Selected Date: " + formattedDate);
     }
 
     private void handleBookingSubmission() {
@@ -269,18 +254,18 @@ public class BookingActivity extends AppCompatActivity {
         }
         
         isSubmitting = true;
-        bookNowButton.setEnabled(false); // Disable button during submission
+        binding.btnBookNow.setEnabled(false); // Disable button during submission
         
         // Trim all inputs using utility method
         String source = BookingStorage.trimAndValidate(
-            sourceEditText.getText().toString(), "Source");
+            binding.etSource.getText().toString(), "Source");
         String destination = BookingStorage.trimAndValidate(
-            destinationEditText.getText().toString(), "Destination");
+            binding.etDestination.getText().toString(), "Destination");
         String phoneNumber = BookingStorage.trimAndValidate(
-            phoneNumberEditText.getText().toString(), "Phone Number");
+            binding.etPhoneNumber.getText().toString(), "Phone Number");
         String vehicleType = BookingStorage.trimAndValidate(
-            vehicleTypeEditText.getText().toString(), "Vehicle Type");
-        String selectedDate = selectedDateText.getText().toString();
+            binding.etVehicleType.getText().toString(), "Vehicle Type");
+        String selectedDate = binding.tvSelectedDate.getText().toString();
 
         // Validation using utility methods
         if (!BookingStorage.isFieldValid(source, "Source") || 
@@ -336,16 +321,16 @@ public class BookingActivity extends AppCompatActivity {
     }
 
     private void clearForm() {
-        sourceEditText.setText("");
-        destinationEditText.setText("");
-        phoneNumberEditText.setText("");
-        vehicleTypeEditText.setText("");
-        selectedDateText.setText("No date selected");
+        binding.etSource.setText("");
+        binding.etDestination.setText("");
+        binding.etPhoneNumber.setText("");
+        binding.etVehicleType.setText("");
+        binding.tvSelectedDate.setText("No date selected");
         selectedDate = DateUtils.today();
     }
     
     private void resetSubmissionState() {
         isSubmitting = false;
-        bookNowButton.setEnabled(true);
+        binding.btnBookNow.setEnabled(true);
     }
 }

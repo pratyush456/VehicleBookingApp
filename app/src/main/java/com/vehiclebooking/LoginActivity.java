@@ -11,13 +11,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import com.vehiclebooking.databinding.ActivityLoginBinding;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText usernameEditText;
-    private EditText passwordEditText;
-    private Button loginButton;
-    private TextView registerLink;
+    private ActivityLoginBinding binding;
     private UserManager userManager;
 
     @Override
@@ -26,7 +24,8 @@ public class LoginActivity extends AppCompatActivity {
         
         try {
             android.util.Log.d("LoginActivity", "LoginActivity started");
-            setContentView(R.layout.activity_login);
+            binding = ActivityLoginBinding.inflate(getLayoutInflater());
+            setContentView(binding.getRoot());
             android.util.Log.d("LoginActivity", "Layout set successfully");
 
             userManager = UserManager.getInstance(this);
@@ -42,7 +41,6 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            initializeViews();
             android.util.Log.d("LoginActivity", "Views initialized");
             
             setupClickListeners();
@@ -54,22 +52,15 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void initializeViews() {
-        usernameEditText = findViewById(R.id.et_username);
-        passwordEditText = findViewById(R.id.et_password);
-        loginButton = findViewById(R.id.btn_login);
-        registerLink = findViewById(R.id.tv_register_link);
-    }
-
     private void setupClickListeners() {
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 handleLogin();
             }
         });
 
-        registerLink.setOnClickListener(new View.OnClickListener() {
+        binding.tvRegisterLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
@@ -82,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
     }
     
     private void setupTextWatchers() {
-        usernameEditText.addTextChangedListener(new TextWatcher() {
+        binding.etUsername.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             
@@ -90,9 +81,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String username = s.toString().trim();
                 if (username.isEmpty()) {
-                    usernameEditText.setError("Username is required");
+                    binding.etUsername.setError("Username is required");
                 } else {
-                    usernameEditText.setError(null);
+                    binding.etUsername.setError(null);
                 }
             }
             
@@ -100,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
         
-        passwordEditText.addTextChangedListener(new TextWatcher() {
+        binding.etPassword.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             
@@ -108,9 +99,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String password = s.toString().trim();
                 if (password.isEmpty()) {
-                    passwordEditText.setError("Password is required");
+                    binding.etPassword.setError("Password is required");
                 } else {
-                    passwordEditText.setError(null);
+                    binding.etPassword.setError(null);
                 }
             }
             
@@ -121,18 +112,18 @@ public class LoginActivity extends AppCompatActivity {
 
     private void handleLogin() {
         String username = BookingStorage.trimAndValidate(
-            usernameEditText.getText().toString(), "Username");
+            binding.etUsername.getText().toString(), "Username");
         String password = BookingStorage.trimAndValidate(
-            passwordEditText.getText().toString(), "Password");
+            binding.etPassword.getText().toString(), "Password");
 
         // Validation using utility methods
         if (!BookingStorage.isFieldValid(username, "Username")) {
-            usernameEditText.setError("Username is required");
+            binding.etUsername.setError("Username is required");
             return;
         }
 
         if (!BookingStorage.isFieldValid(password, "Password")) {
-            passwordEditText.setError("Password is required");
+            binding.etPassword.setError("Password is required");
             return;
         }
 
